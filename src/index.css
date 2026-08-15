@@ -2,12 +2,11 @@
   --bg-color: #0b0c0f;
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.72);
-  --glass-bg: rgba(28, 30, 38, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.1); /* Деликатный, менее яркий контур */
-  --glass-active: rgba(45, 48, 60, 0.75);
+  --glass-bg: rgba(30, 32, 40, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-active: rgba(45, 48, 60, 0.85);
 }
 
-/* Полная блокировка выделения и жестов */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -18,7 +17,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Фиксация страницы без скролла вверх/вниз и "резинки" iOS */
 html, body {
   position: fixed;
   inset: 0;
@@ -41,7 +39,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Слой физики */
+/* Канвас на фоне */
 .physics-canvas {
   position: absolute;
   inset: 0;
@@ -51,7 +49,7 @@ html, body {
   pointer-events: none;
 }
 
-/* UI-интерфейс */
+/* UI экран */
 .screen-container {
   position: relative;
   z-index: 2;
@@ -65,14 +63,13 @@ html, body {
   pointer-events: none;
 }
 
-/* Текстовый блок */
 .text-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 12px;
-  margin-bottom: 36px;
+  margin-bottom: 34px;
   max-width: 330px;
 }
 
@@ -92,7 +89,7 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* Кнопка с мягким контуром и стеклом */
+/* Чистая плоская iOS кнопка (без градиента) */
 .ios-glass-btn {
   pointer-events: auto;
   width: 100%;
@@ -114,7 +111,7 @@ html, body {
   
   cursor: pointer;
   outline: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: none;
   
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
               background-color 0.15s ease,
@@ -124,5 +121,31 @@ html, body {
 .ios-glass-btn:active {
   transform: scale(0.96);
   background: var(--glass-active);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Заглушка для блокировки горизонтального режима на смартфонах */
+.landscape-lock-overlay {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .landscape-lock-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .landscape-lock-overlay p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
 }
