@@ -1,3 +1,6 @@
+/* ===================================================
+   ПЕРЕМЕННЫЕ И ОСНОВНАЯ ПАЛИТРА iOS
+   =================================================== */
 :root {
   --bg-color: #0b0c0f;
   --text-primary: #ffffff;
@@ -7,6 +10,9 @@
   --glass-active: rgba(45, 48, 60, 0.85);
 }
 
+/* ===================================================
+   ГЛОБАЛЬНЫЙ СБРОС И БЛОКИРОВКА ЖЕСТОВ/СКРОЛЛА
+   =================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -33,6 +39,7 @@ html, body {
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -47,9 +54,8 @@ html, body {
 }
 
 /* ===================================================
-   ГЛАВНЫЙ ЭКРАН (HOME)
+   ГЛАВНЫЙ ЭКРАН (HOME SCREEN)
    =================================================== */
-
 .screen-container {
   display: flex;
   flex-direction: column;
@@ -61,6 +67,7 @@ html, body {
   text-align: center;
 }
 
+/* Слот для Lottie и скелетона на главном экране */
 .animation-slot {
   position: relative;
   width: 136px;
@@ -71,6 +78,7 @@ html, body {
   justify-content: center;
 }
 
+/* Мок-квадрат: без контура, без свечений, мягкое дыхание */
 .ios-skeleton-box {
   width: 100%;
   height: 100%;
@@ -136,9 +144,50 @@ html, body {
 }
 
 /* ===================================================
+   КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
+   =================================================== */
+.home-settings-btn {
+  position: fixed;
+  top: calc(18px + env(safe-area-inset-top));
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: none;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.home-settings-btn:active {
+  transform: scale(0.92);
+  background: var(--glass-active);
+}
+
+.settings-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.settings-svg-fallback {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+/* ===================================================
    iOS GLASS КНОПКА
    =================================================== */
-
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
@@ -180,9 +229,8 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН ЗАГРУЗКИ
+   ЭКРАН ЗАГРУЗКИ (100% ЧЕРНЫЙ ФОН)
    =================================================== */
-
 .loading-screen {
   position: fixed;
   top: -10px;
@@ -261,10 +309,20 @@ html, body {
 }
 
 @keyframes jellyPop {
-  0% { opacity: 0; transform: scale(0.3) translateY(12px); }
-  50% { transform: scale(1.22, 0.82) translateY(-4px); }
-  75% { transform: scale(0.92, 1.08) translateY(1px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(12px);
+  }
+  50% {
+    transform: scale(1.22, 0.82) translateY(-4px);
+  }
+  75% {
+    transform: scale(0.92, 1.08) translateY(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .loading-dots { display: flex; align-items: center; }
@@ -285,7 +343,6 @@ html, body {
 /* ===================================================
    ЭКРАН ИГРЫ (GAME SCREEN)
    =================================================== */
-
 .game-screen-container {
   display: flex;
   flex-direction: column;
@@ -294,7 +351,7 @@ html, body {
   width: 100%;
   max-width: 360px;
   height: 100%;
-  max-height: 560px; /* Уменьшили высоту для собранного вида */
+  max-height: 560px;
   padding: 16px 20px;
 }
 
@@ -325,6 +382,20 @@ html, body {
   justify-content: center;
 }
 
+.lottie-icon-host {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-write-lottie-host {
+  width: 84px;
+  height: 84px;
+}
+
 .game-question-block {
   display: flex;
   flex-direction: column;
@@ -335,7 +406,7 @@ html, body {
   justify-content: center;
 }
 
-/* Моковые полоски загрузки текста */
+/* Скелетон загрузки текста */
 .question-skeleton-group {
   display: flex;
   flex-direction: column;
@@ -396,7 +467,6 @@ html, body {
   animation: jellyPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Компактный отступ между вопросом и кнопками */
 .game-compact-spacer {
   height: 24px;
   flex-shrink: 0;
@@ -411,9 +481,8 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН РАЗДУМИЙ ИИ
+   ЭКРАН РАЗДУМИЙ ИИ (THINKING SCREEN)
    =================================================== */
-
 .thinking-screen-view {
   width: 100%;
   height: 100%;
@@ -433,6 +502,11 @@ html, body {
   justify-content: center;
 }
 
+.thinking-lottie-host {
+  width: 110px;
+  height: 110px;
+}
+
 .thinking-text-animated {
   font-size: 1.25rem;
   font-weight: 600;
@@ -445,141 +519,50 @@ html, body {
   max-width: 280px;
 }
 
-/* ===================================================
-   ЗАГЛУШКА ОРИЕНТАЦИИ
-   =================================================== */
-
-.landscape-lock-overlay {
-  display: none;
-}
-
-@media (orientation: landscape) and (max-height: 520px) {
-  .landscape-lock-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999999;
-    background-color: #000000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    gap: 10px;
-  }
-
-  .landscape-lock-overlay h2 { font-size: 1.2rem; }
-  .landscape-lock-overlay p { font-size: 0.95rem; color: var(--text-secondary); }
-}
-
-.lottie-icon-host {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.game-write-lottie-host {
-  width: 84px;
-  height: 84px;
-}
-
-.thinking-lottie-host {
-  width: 110px;
-  height: 110px;
-}
-/* Экран реальной ошибки */
-.game-error-view {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px;
-  gap: 16px;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.game-error-icon {
-  font-size: 2.5rem;
-}
-
-.game-error-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #ff453a;
-}
-
-.game-error-text {
-  font-size: 0.95rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 300px;
-  word-break: break-word;
-}
-/* ===================================================
-   КРУГЛАЯ КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
-   =================================================== */
-
-.home-settings-btn {
-  position: fixed;
-  top: calc(18px + env(safe-area-inset-top));
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid var(--glass-border);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 50;
-  box-shadow: none;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-.home-settings-btn:active {
-  transform: scale(0.92);
-  background: var(--glass-active);
-}
-
-.settings-icon-img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
-.settings-svg-fallback {
-  width: 20px;
-  height: 20px;
-  opacity: 0.9;
+.thinking-word {
+  display: inline-flex;
+  white-space: pre;
 }
 
 /* ===================================================
    ЭКРАН НАСТРОЕК (SETTINGS SCREEN)
    =================================================== */
-
 .settings-screen-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(11, 12, 15, 0.88);
-  backdrop-filter: blur(35px) saturate(190%);
-  -webkit-backdrop-filter: blur(35px) saturate(190%);
+  background-color: #0b0c0f;
   z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: calc(16px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
-  animation: fadeIn 0.25s ease-out;
+  padding: calc(18px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  animation: settingsDarkFadeIn 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.settings-screen-overlay.closing {
+  animation: settingsDarkFadeOut 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes settingsDarkFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes settingsDarkFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
 }
 
 .settings-container {
@@ -591,6 +574,7 @@ html, body {
 
 .settings-header {
   width: 100%;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -610,20 +594,40 @@ html, body {
   transform: translateX(-50%);
 }
 
-.settings-close-btn {
+.settings-close-round-btn {
   margin-left: auto;
-  background: none;
-  border: none;
-  color: #0a84ff;
-  font-size: 1.05rem;
-  font-weight: 600;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 8px;
+  box-shadow: none;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
-.settings-close-btn:active {
-  opacity: 0.7;
+.settings-close-round-btn:active {
+  transform: scale(0.92);
+  background: var(--glass-active);
+}
+
+.cross-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.cross-svg-fallback {
+  width: 16px;
+  height: 16px;
+  opacity: 0.85;
 }
 
 .settings-section {
@@ -632,7 +636,6 @@ html, body {
   gap: 10px;
 }
 
-/* Стеклянная капсула модели (пониженная высота) */
 .model-capsule-btn {
   width: 100%;
   padding: 12px 18px;
@@ -666,7 +669,7 @@ html, body {
 }
 
 .model-name {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: -0.015em;
 }
@@ -699,12 +702,9 @@ html, body {
   padding: 0 12px;
 }
 
-/* Выпадающий список моделей */
 .models-dropdown-list {
   margin-top: 8px;
-  background: rgba(26, 28, 36, 0.75);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  background: rgba(26, 28, 36, 0.95);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   overflow: hidden;
@@ -757,8 +757,62 @@ html, body {
   font-weight: 700;
 }
 
-/* Фикс пробелов в тексте размышлений */
-.thinking-word {
-  display: inline-flex;
-  white-space: pre;
+/* ===================================================
+   ЭКРАН ОШИБКИ API
+   =================================================== */
+.game-error-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  gap: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.game-error-icon {
+  font-size: 2.5rem;
+}
+
+.game-error-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ff453a;
+}
+
+.game-error-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 300px;
+  word-break: break-word;
+}
+
+/* ===================================================
+   ЗАГЛУШКА ГОРИЗОНТАЛЬНОЙ ОРИЕНТАЦИИ
+   =================================================== */
+.landscape-lock-overlay {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .landscape-lock-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999999;
+    background-color: #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .landscape-lock-overlay h2 { font-size: 1.2rem; }
+  .landscape-lock-overlay p { font-size: 0.95rem; color: var(--text-secondary); }
 }
