@@ -1,0 +1,103 @@
+:root {
+  --bg-color: #121214;
+  --text-color: #f3f4f6;
+  --amber-glass: rgba(245, 158, 11, 0.85);
+  --amber-border: rgba(245, 158, 11, 1);
+  --amber-glow: rgba(245, 158, 11, 0.25);
+}
+
+/* Полный запрет выделения текста, картинок и жестов масштабирования */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Учет безопасных зон для "челок" iPhone */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Главный контейнер экрана */
+.screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 380px;
+  padding: 24px;
+}
+
+/* Текст по центру */
+.hero-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  color: #e5e7eb;
+  letter-spacing: -0.01em;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+/* Кнопка в стиле iOS Liquid Glass */
+.liquid-amber-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: var(--amber-glass);
+  
+  /* Эффект Liquid Glass */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  /* Тонкая рамка 100% непрозрачности */
+  border: 1px solid var(--amber-border);
+  border-radius: 9999px;
+  
+  /* Текст кнопки */
+  color: #ffffff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  cursor: pointer;
+  outline: none;
+  
+  /* Внутренний и внешний объем/свечение */
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 8px 24px var(--amber-glow);
+
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Интерактив при нажатии */
+.liquid-amber-btn:active {
+  transform: scale(0.96);
+  opacity: 0.95;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 4px 12px var(--amber-glow);
+}
