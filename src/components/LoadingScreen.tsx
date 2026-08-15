@@ -2,36 +2,43 @@ import React, { useEffect, useState } from 'react';
 
 const LETTERS = 'Загрузка'.split('');
 
-export const LoadingScreen: React.FC = () => {
+interface LoadingScreenProps {
+  onComplete: () => void;
+}
+
+export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [fillProgress, setFillProgress] = useState(0);
   const [duration, setDuration] = useState(2000);
 
   useEffect(() => {
-    // Случайное время заполнения от 1 до 3 секунд (1000ms - 3000ms)
+    // Случайное время заполнения от 1 до 3 секунд
     const randomDuration = Math.floor(Math.random() * 2000) + 1000;
     setDuration(randomDuration);
 
-    // Запускаем заполнение снизу вверх через микропаузу для плавного старта
-    const timer = setTimeout(() => {
+    const startTimer = setTimeout(() => {
       setFillProgress(100);
     }, 150);
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Завершение загрузки и автоматический переход к игре
+    const completeTimer = setTimeout(() => {
+      onComplete();
+    }, randomDuration + 400);
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(completeTimer);
+    };
+  }, [onComplete]);
 
   return (
     <div className="loading-screen">
       <div className="loading-content">
-        {/* Иконка с заполнением снизу вверх */}
         <div className="loading-icon-wrapper">
-          {/* Базовая подложка: прозрачность 0.2 */}
           <img 
             src="/icon.png" 
             alt="Craig Logo" 
             className="loading-icon base" 
           />
-
-          {/* Заполняющий слой снизу вверх: прозрачность 0.3 */}
           <img 
             src="/icon.png" 
             alt="Craig Logo Fill" 
@@ -43,7 +50,6 @@ export const LoadingScreen: React.FC = () => {
           />
         </div>
 
-        {/* Текст сразу под иконкой с мармеладной посимвольной анимацией */}
         <div className="loading-status">
           <div className="loading-word">
             {LETTERS.map((char, index) => (
