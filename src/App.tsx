@@ -55,14 +55,6 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  const handleStart = () => {
-    setCurrentScreen('loading');
-  };
-
-  const handleLoadingComplete = () => {
-    setCurrentScreen('game');
-  };
-
   return (
     <>
       <div className="landscape-lock-overlay">
@@ -70,14 +62,17 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
+      {/* Оверлей загрузки с плавным растворением */}
       {currentScreen === 'loading' && (
-        <LoadingScreen onComplete={handleLoadingComplete} />
+        <LoadingScreen onComplete={() => setCurrentScreen('game')} />
       )}
 
+      {/* Экран игры */}
       {currentScreen === 'game' && (
         <GameScreen />
       )}
 
+      {/* Главный экран */}
       {currentScreen === 'home' && (
         <main className="screen-container">
           <div className="animation-slot">
@@ -100,7 +95,7 @@ export const App: React.FC = () => {
           <button 
             type="button" 
             className="ios-glass-btn"
-            onClick={handleStart}
+            onClick={() => setCurrentScreen('loading')}
           >
             {buttonText}
           </button>
