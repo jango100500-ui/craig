@@ -19,7 +19,10 @@
 
 html, body {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -43,6 +46,10 @@ html, body {
   align-items: center;
 }
 
+/* ===================================================
+   ГЛАВНЫЙ ЭКРАН (HOME)
+   =================================================== */
+
 .screen-container {
   display: flex;
   flex-direction: column;
@@ -54,7 +61,6 @@ html, body {
   text-align: center;
 }
 
-/* Слот анимации */
 .animation-slot {
   position: relative;
   width: 136px;
@@ -72,6 +78,10 @@ html, body {
   border: none;
   background-color: rgba(255, 255, 255, 0.03);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
+}
+
+.ios-skeleton-box.mini {
+  border-radius: 18px;
 }
 
 @keyframes smoothColorFade {
@@ -103,7 +113,6 @@ html, body {
   height: 100% !important;
 }
 
-/* Тексты главного экрана */
 .text-group {
   display: flex;
   flex-direction: column;
@@ -129,11 +138,14 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* Кнопка */
+/* ===================================================
+   iOS GLASS КНОПКА
+   =================================================== */
+
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
-  padding: 17px 24px;
+  padding: 16px 24px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -159,17 +171,20 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН ЗАГРУЗКИ (100% ЧЕРНЫЙ ФОН И МАРМЕЛАДНЫЙ ТЕКСТ)
+   ЭКРАН ЗАГРУЗКИ (100% ГЛУБОКИЙ ЧЕРНЫЙ БЕЗ ЩЕЛЕЙ)
    =================================================== */
 
 .loading-screen {
   position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  background-color: #000000; /* Абсолютно сплошной черный */
-  z-index: 99999;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  width: calc(100vw + 20px);
+  height: calc(100vh + 20px);
+  height: calc(100dvh + 20px);
+  background: #000000;
+  z-index: 999999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,7 +203,6 @@ html, body {
   justify-content: center;
 }
 
-/* Иконка в центре */
 .loading-icon-wrapper {
   position: relative;
   width: 88px;
@@ -200,14 +214,8 @@ html, body {
 }
 
 @keyframes iconSpringIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 .loading-icon {
@@ -219,16 +227,9 @@ html, body {
   filter: brightness(0) invert(1);
 }
 
-.loading-icon.base {
-  opacity: 0.2;
-}
+.loading-icon.base { opacity: 0.2; }
+.loading-icon.fill { opacity: 0.3; will-change: clip-path; }
 
-.loading-icon.fill {
-  opacity: 0.3;
-  will-change: clip-path;
-}
-
-/* Текст «Загрузка...» сразу под иконкой */
 .loading-status {
   margin-top: 18px;
   display: flex;
@@ -240,12 +241,8 @@ html, body {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.loading-word {
-  display: flex;
-  align-items: center;
-}
+.loading-word { display: flex; align-items: center; }
 
-/* Мармеладное появление букв */
 .jelly-char {
   display: inline-block;
   opacity: 0;
@@ -254,27 +251,13 @@ html, body {
 }
 
 @keyframes jellyPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(12px);
-  }
-  50% {
-    transform: scale(1.22, 0.82) translateY(-4px);
-  }
-  75% {
-    transform: scale(0.92, 1.08) translateY(1px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  0% { opacity: 0; transform: scale(0.3) translateY(12px); }
+  50% { transform: scale(1.22, 0.82) translateY(-4px); }
+  75% { transform: scale(0.92, 1.08) translateY(1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* Пружинящие точки */
-.loading-dots {
-  display: flex;
-  align-items: center;
-}
+.loading-dots { display: flex; align-items: center; }
 
 .jelly-dot {
   display: inline-block;
@@ -285,17 +268,90 @@ html, body {
 }
 
 @keyframes jellyDotWave {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.35;
-  }
-  50% {
-    transform: translateY(-5px) scale(1.35, 0.75);
-    opacity: 1;
-  }
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.35; }
+  50% { transform: translateY(-5px) scale(1.35, 0.75); opacity: 1; }
 }
 
-/* Заглушка ориентации */
+/* ===================================================
+   ЭКРАН ИГРЫ (GAME SCREEN)
+   =================================================== */
+
+.game-screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 360px;
+  height: 100%;
+  max-height: 580px;
+  padding: 24px 20px;
+  animation: gameScreenIn 0.4s ease-out forwards;
+}
+
+@keyframes gameScreenIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Верхняя карточка с анимацией и вопросом */
+.game-header-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+}
+
+.game-lottie-slot {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-question-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.game-question-badge {
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.game-question-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+}
+
+/* 4 кнопки в столбик */
+.game-buttons-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===================================================
+   ЗАГЛУШКА ОРИЕНТАЦИИ
+   =================================================== */
+
 .landscape-lock-overlay {
   display: none;
 }
@@ -304,7 +360,7 @@ html, body {
   .landscape-lock-overlay {
     position: fixed;
     inset: 0;
-    z-index: 999999;
+    z-index: 9999999;
     background-color: #000000;
     display: flex;
     flex-direction: column;
