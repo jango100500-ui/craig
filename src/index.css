@@ -816,3 +816,24 @@ html, body {
   .landscape-lock-overlay h2 { font-size: 1.2rem; }
   .landscape-lock-overlay p { font-size: 0.95rem; color: var(--text-secondary); }
 }
+.models-dropdown-list {
+  margin-top: 8px;
+  background: rgba(26, 28, 36, 0.95);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow-y: auto;
+  max-height: 280px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-out;
+  -webkit-overflow-scrolling: touch;
+}
+
+.models-dropdown-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.models-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
