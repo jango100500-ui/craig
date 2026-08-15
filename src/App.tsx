@@ -14,7 +14,6 @@ export const App: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<'home' | 'loading'>('home');
 
-  // Выбираем случайную надпись для кнопки при старте
   const [buttonText] = useState(() => {
     const randomIndex = Math.floor(Math.random() * BUTTON_OPTIONS.length);
     return BUTTON_OPTIONS[randomIndex];
@@ -56,7 +55,6 @@ export const App: React.FC = () => {
   }, []);
 
   const handleStart = () => {
-    // Переход на экран загрузки
     setCurrentScreen('loading');
   };
 
