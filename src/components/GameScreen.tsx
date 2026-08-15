@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import lottie from 'lottie-web';
+import React, { useEffect, useState } from 'react';
 import { askCraig, AIResponse, ChatMessage } from '../services/gemini';
+import { LottieIcon } from './LottieIcon';
 
 const THINKING_PHRASES = [
   'Хм, дай мне подумать…',
@@ -15,12 +15,6 @@ interface GameScreenProps {
 }
 
 export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
-  const writeContainer = useRef<HTMLDivElement | null>(null);
-  const thinkingContainer = useRef<HTMLDivElement | null>(null);
-
-  const [isWriteLoaded, setIsWriteLoaded] = useState(false);
-  const [isThinkingLoaded, setIsThinkingLoaded] = useState(false);
-
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [currentAI, setCurrentAI] = useState<AIResponse | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -31,62 +25,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   // Защита от мисклика (5 секунд)
   const [countdown, setCountdown] = useState<number>(5.0);
   const [isLocked, setIsLocked] = useState<boolean>(true);
-
-  // Мармеладный переход номера вопроса
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // 1. Инициализация Lottie Write.json
-  useEffect(() => {
-    let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
-    fetch(`/Write.json?t=${Date.now()}`)
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((animationData) => {
-        if (!writeContainer.current) return;
-        anim = lottie.loadAnimation({
-          container: writeContainer.current,
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          animationData,
-        });
-        setIsWriteLoaded(true);
-      })
-      .catch(() => setIsWriteLoaded(false));
-
-    return () => anim?.destroy();
-  }, []);
-
-  // 2. Инициализация Lottie Thinking.json
-  useEffect(() => {
-    let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
-    if (isThinking) {
-      fetch(`/Thinking.json?t=${Date.now()}`)
-        .then((res) => (res.ok ? res.json() : Promise.reject()))
-        .then((animationData) => {
-          if (!thinkingContainer.current) return;
-          anim = lottie.loadAnimation({
-            container: thinkingContainer.current,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            animationData,
-          });
-          setIsThinkingLoaded(true);
-        })
-        .catch(() => setIsThinkingLoaded(false));
-    }
-    return () => anim?.destroy();
-  }, [isThinking]);
-
-  // 3. Запрос первого вопроса при старте
+  // 1. Первый фундаментальный вопрос от Крегга
   useEffect(() => {
     const startInitialQuestion = async () => {
       setIsInitialLoading(true);
+      const initialUserMsg: ChatMessage = {
+        role: 'user',
+        parts: [{ text: 'Я загадал персонажа. Начни игру и задай первый фундаментальный вопрос.' }]
+      };
+
       try {
-        const initialUserMsg: ChatMessage = {
-          role: 'user',
-          parts: [{ text: 'Я загадал персонажа. Начни игру и задай первый фундаментальный вопрос.' }]
-        };
         const firstAI = await askCraig([initialUserMsg]);
         setCurrentAI(firstAI);
         setHistory([
@@ -94,13 +44,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           { role: 'model', parts: [{ text: JSON.stringify(firstAI) }] }
         ]);
       } catch (err) {
-        console.error('Ошибка старта игры, переключаем на дефолтный вопрос:', err);
-        setCurrentAI({
-          reflection: 'Резервный вопрос',
+        console.error('Ошибка старта игры:', err);
+        const fallbackAI: AIResponse = {
+          reflection: 'Резервный старт',
           qunumber: 1,
           answer: 'Твой персонаж существует в реальном мире?',
           character: null
-        });
+        };
+        setCurrentAI(fallbackAI);
+        setHistory([
+          initialUserMsg,
+          { role: 'model', parts: [{ text: JSON.stringify(fallbackAI) }] }
+        ]);
       } finally {
         setIsInitialLoading(false);
       }
@@ -109,7 +64,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     startInitialQuestion();
   }, []);
 
-  // 4. Таймер защиты от мисклика (5.0s)
+  // 2. Таймер блокировки (5.0s) на каждый вопрос
   useEffect(() => {
     if (!currentAI) return;
     setIsLocked(true);
@@ -129,12 +84,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // 5. Обработка ответа игрока
+  // 3. Отправка ответа игрока
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
     if (currentAI.character && answerText === 'Да, угадал!') {
-      alert(`🎉 Крегг угадал персонажа: ${currentAI.character}!`);
+      alert(`🎉 Крегг угадал твоего персонажа: ${currentAI.character}!`);
       onRestart();
       return;
     }
@@ -143,21 +98,36 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     setThinkingPhrase(randomPhrase);
     setIsThinking(true);
 
-    const newHistory: ChatMessage[] = [
-      ...history,
-      { role: 'user', parts: [{ text: `Ответ игрока на вопрос ${currentAI.qunumber}: "${answerText}"` }] }
-    ];
+    const userReplyMsg: ChatMessage = {
+      role: 'user',
+      parts: [{ text: `Ответ игрока на вопрос ${currentAI.qunumber}: "${answerText}"` }]
+    };
+
+    const updatedHistory: ChatMessage[] = [...history, userReplyMsg];
 
     try {
-      const nextAI = await askCraig(newHistory);
+      const nextAI = await askCraig(updatedHistory);
       setNumberAnimKey((k) => k + 1);
       setCurrentAI(nextAI);
       setHistory([
-        ...newHistory,
+        ...updatedHistory,
         { role: 'model', parts: [{ text: JSON.stringify(nextAI) }] }
       ]);
     } catch (err) {
-      console.error('Ошибка получения ответа:', err);
+      console.error('Ошибка получения ответа от ИИ:', err);
+      // Если запрос сорвался — мягко повторяем с резервным шагом
+      const fallbackNext: AIResponse = {
+        reflection: 'Резервный шаг',
+        qunumber: (currentAI.qunumber || 1) + 1,
+        answer: 'Этот персонаж мужского пола?',
+        character: null
+      };
+      setNumberAnimKey((k) => k + 1);
+      setCurrentAI(fallbackNext);
+      setHistory([
+        ...updatedHistory,
+        { role: 'model', parts: [{ text: JSON.stringify(fallbackNext) }] }
+      ]);
     } finally {
       setIsThinking(false);
     }
@@ -167,14 +137,14 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
   return (
     <main className="game-screen-container">
-      {/* 1. ЭКРАН РАЗДУМИЙ ИИ */}
+      {/* 1. ЭКРАН РАЗДУМИЙ КРЕГГА */}
       {isThinking ? (
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
-            {!isThinkingLoaded && <div className="ios-skeleton-box game-mock" />}
-            <div 
-              ref={thinkingContainer} 
-              className={`lottie-player ${isThinkingLoaded ? 'visible' : 'hidden'}`} 
+            <LottieIcon 
+              src="/Thinking.json" 
+              className="thinking-lottie-host" 
+              fallbackClass="game-mock" 
             />
           </div>
 
@@ -190,19 +160,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         /* 2. ЭКРАН ВОПРОСА */
         <div className="game-active-view">
           <div className="game-header-area">
-            {/* Анимация Write.json */}
+            {/* Анимация Write.json — теперь никогда не исчезает */}
             <div className="game-lottie-slot">
-              {!isWriteLoaded && <div className="ios-skeleton-box game-mock" />}
-              <div 
-                ref={writeContainer} 
-                className={`lottie-player ${isWriteLoaded ? 'visible' : 'hidden'}`} 
+              <LottieIcon 
+                src="/Write.json" 
+                className="game-write-lottie-host" 
+                fallbackClass="game-mock" 
               />
             </div>
 
-            {/* Текстовая зона вопроса / Скелетон */}
+            {/* Текст вопроса и номер */}
             <div className="game-question-block">
               {isInitialLoading || !currentAI ? (
-                /* Скелетон загрузки текста */
                 <div className="question-skeleton-group">
                   <div className="text-skeleton-line short" />
                   <div className="text-skeleton-line full" />
@@ -232,10 +201,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
             </div>
           </div>
 
-          {/* Компактный отступ */}
           <div className="game-compact-spacer" />
 
-          {/* Кнопки ответов */}
+          {/* 4 кнопки ответов (или 2 при угадывании) */}
           <div className="game-buttons-group">
             {isGuessMode ? (
               <>
