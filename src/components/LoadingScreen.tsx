@@ -1,57 +1,68 @@
 import React, { useEffect, useState } from 'react';
 
+const LETTERS = 'Загрузка'.split('');
+
 export const LoadingScreen: React.FC = () => {
-  const [typedText, setTypedText] = useState('');
-  const [dots, setDots] = useState('');
-  const fullWord = 'Загрузка';
+  const [fillProgress, setFillProgress] = useState(0);
+  const [duration, setDuration] = useState(2000);
 
   useEffect(() => {
-    let index = 0;
+    // Случайное время заполнения от 1 до 3 секунд (1000ms - 3000ms)
+    const randomDuration = Math.floor(Math.random() * 2000) + 1000;
+    setDuration(randomDuration);
 
-    // 1. Быстрое посимвольное появление слова "Загрузка"
-    const typeInterval = setInterval(() => {
-      index++;
-      setTypedText(fullWord.slice(0, index));
+    // Запускаем заполнение снизу вверх через микропаузу для плавного старта
+    const timer = setTimeout(() => {
+      setFillProgress(100);
+    }, 150);
 
-      if (index >= fullWord.length) {
-        clearInterval(typeInterval);
-
-        // 2. После появления слова запускаем зацикленную анимацию точек
-        let dotCount = 0;
-        const dotsInterval = setInterval(() => {
-          dotCount = (dotCount + 1) % 4;
-          setDots('.'.repeat(dotCount));
-        }, 360);
-
-        return () => clearInterval(dotsInterval);
-      }
-    }, 45);
-
-    return () => clearInterval(typeInterval);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="loading-screen">
-      {/* Центр: Иконка с заполнением сверху вниз */}
-      <div className="loading-icon-wrapper">
-        {/* Базовая подложка: белая, прозрачность 0.2 */}
-        <img 
-          src="/icon.png" 
-          alt="Craig Logo" 
-          className="loading-icon base" 
-        />
-        {/* Заполняющий слой: белая, прозрачность 0.3 */}
-        <img 
-          src="/icon.png" 
-          alt="Craig Logo Fill" 
-          className="loading-icon fill" 
-        />
-      </div>
+      <div className="loading-content">
+        {/* Иконка с заполнением снизу вверх */}
+        <div className="loading-icon-wrapper">
+          {/* Базовая подложка: прозрачность 0.2 */}
+          <img 
+            src="/icon.png" 
+            alt="Craig Logo" 
+            className="loading-icon base" 
+          />
 
-      {/* Низ: Текст загрузки */}
-      <div className="loading-status">
-        <span className="loading-word">{typedText}</span>
-        <span className="loading-dots">{dots}</span>
+          {/* Заполняющий слой снизу вверх: прозрачность 0.3 */}
+          <img 
+            src="/icon.png" 
+            alt="Craig Logo Fill" 
+            className="loading-icon fill" 
+            style={{
+              clipPath: `inset(${100 - fillProgress}% 0 0 0)`,
+              transition: `clip-path ${duration}ms cubic-bezier(0.25, 1, 0.5, 1)`
+            }}
+          />
+        </div>
+
+        {/* Текст сразу под иконкой с мармеладной посимвольной анимацией */}
+        <div className="loading-status">
+          <div className="loading-word">
+            {LETTERS.map((char, index) => (
+              <span 
+                key={index} 
+                className="jelly-char"
+                style={{ animationDelay: `${index * 55}ms` }}
+              >
+                {char}
+              </span>
+            ))}
+          </div>
+
+          <div className="loading-dots">
+            <span className="jelly-dot" style={{ animationDelay: '450ms' }}>.</span>
+            <span className="jelly-dot" style={{ animationDelay: '600ms' }}>.</span>
+            <span className="jelly-dot" style={{ animationDelay: '750ms' }}>.</span>
+          </div>
+        </div>
       </div>
     </div>
   );
