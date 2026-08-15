@@ -4,11 +4,11 @@ import lottie from 'lottie-web';
 export const GameScreen: React.FC = () => {
   const writeContainer = useRef<HTMLDivElement | null>(null);
   const [isWriteLoaded, setIsWriteLoaded] = useState(false);
+  const questionNumber = 1;
 
   useEffect(() => {
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-    // Загрузка Write.json
     fetch(`/Write.json?t=${Date.now()}`)
       .then((res) => {
         if (!res.ok) throw new Error('Write.json не найден');
@@ -37,15 +37,15 @@ export const GameScreen: React.FC = () => {
   }, []);
 
   const handleAnswer = (answer: string) => {
-    console.log(`Ответ игрока: ${answer}`);
+    console.log(`Ответ: ${answer}`);
   };
 
   return (
     <main className="game-screen-container">
-      {/* Верхний блок: Write.json слева + Вопрос справа */}
-      <div className="game-header-card">
+      {/* Верхний блок: без рамок и фона, увеличенный размер */}
+      <div className="game-header-area">
         <div className="game-lottie-slot">
-          {!isWriteLoaded && <div className="ios-skeleton-box mini" />}
+          {!isWriteLoaded && <div className="ios-skeleton-box game-mock" />}
           <div 
             ref={writeContainer} 
             className={`lottie-player ${isWriteLoaded ? 'visible' : 'hidden'}`} 
@@ -53,14 +53,28 @@ export const GameScreen: React.FC = () => {
         </div>
 
         <div className="game-question-block">
-          <h2 className="game-question-badge">Вопрос 1</h2>
+          {/* Скругленный заголовок */}
+          <span className="game-question-badge">
+            Вопрос {questionNumber}
+          </span>
           <p className="game-question-text">
             Твой персонаж — реальный человек?
           </p>
         </div>
       </div>
 
-      {/* 4 кнопки ответов в столбик */}
+      {/* Заполнение пространства: деликатный AI-импульс мыслей */}
+      <div className="ai-thought-space">
+        <div className="thought-bars">
+          <span className="bar b1" />
+          <span className="bar b2" />
+          <span className="bar b3" />
+          <span className="bar b4" />
+          <span className="bar b5" />
+        </div>
+      </div>
+
+      {/* 4 кнопки ответов */}
       <div className="game-buttons-group">
         <button 
           type="button" 
