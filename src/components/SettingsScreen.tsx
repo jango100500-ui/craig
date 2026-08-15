@@ -8,6 +8,7 @@ interface SettingsScreenProps {
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
   const [selectedId, setSelectedId] = useState(getSelectedModelId());
   const [isOpenList, setIsOpenList] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const currentModel = AVAILABLE_MODELS.find(m => m.id === selectedId) || AVAILABLE_MODELS[0];
 
@@ -17,24 +18,46 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
     setIsOpenList(false);
   };
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 220); // Быстрое плавное растемнение
+  };
+
   return (
-    <div className="settings-screen-overlay">
+    <div className={`settings-screen-overlay ${isClosing ? 'closing' : ''}`}>
       <div className="settings-container">
-        {/* Верхняя шапка */}
+        {/* Шапка настроек */}
         <header className="settings-header">
           <h2 className="settings-title">НАСТРОЙКИ</h2>
+
+          {/* Круглая стеклянная кнопка закрытия с Cross.png */}
           <button 
             type="button" 
-            className="settings-close-btn"
-            onClick={onClose}
+            className="settings-close-round-btn"
+            onClick={handleClose}
+            aria-label="Закрыть"
           >
-            Готово
+            <img 
+              src="/Cross.png" 
+              alt=""
+              className="cross-icon-img"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+            {/* Резервный крестик */}
+            <svg className="cross-svg-fallback" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </header>
 
         {/* Секция выбора модели */}
         <div className="settings-section">
-          {/* Стеклянная капсула модели (пониженной высоты) */}
+          {/* Стеклянная капсула пониженной высоты */}
           <button 
             type="button"
             className={`model-capsule-btn ${isOpenList ? 'active' : ''}`}
@@ -54,9 +77,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             </div>
           </button>
 
-          {/* Описание под капсулой */}
           <p className="settings-caption">
-            Выберите основную модель для Крегга. При сбое будет автоматически задействована резервная.
+            Выберите модель для Крегга. При сбое будет автоматически задействована резервная.
           </p>
 
           {/* Выпадающий список моделей */}
