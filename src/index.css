@@ -521,3 +521,244 @@ html, body {
   max-width: 300px;
   word-break: break-word;
 }
+/* ===================================================
+   КРУГЛАЯ КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
+   =================================================== */
+
+.home-settings-btn {
+  position: fixed;
+  top: calc(18px + env(safe-area-inset-top));
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: none;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.home-settings-btn:active {
+  transform: scale(0.92);
+  background: var(--glass-active);
+}
+
+.settings-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.settings-svg-fallback {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+/* ===================================================
+   ЭКРАН НАСТРОЕК (SETTINGS SCREEN)
+   =================================================== */
+
+.settings-screen-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(11, 12, 15, 0.88);
+  backdrop-filter: blur(35px) saturate(190%);
+  -webkit-backdrop-filter: blur(35px) saturate(190%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(16px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  animation: fadeIn 0.25s ease-out;
+}
+
+.settings-container {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.settings-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.settings-close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #0a84ff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.settings-close-btn:active {
+  opacity: 0.7;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Стеклянная капсула модели (пониженная высота) */
+.model-capsule-btn {
+  width: 100%;
+  padding: 12px 18px;
+  min-height: 48px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.model-capsule-btn:active {
+  transform: scale(0.98);
+}
+
+.model-capsule-btn.active {
+  background: var(--glass-active);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.model-capsule-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.model-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.model-tag-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: -0.01em;
+}
+
+.model-capsule-arrow {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.model-capsule-arrow.open {
+  transform: rotate(180deg);
+}
+
+.settings-caption {
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 0 12px;
+}
+
+/* Выпадающий список моделей */
+.models-dropdown-list {
+  margin-top: 8px;
+  background: rgba(26, 28, 36, 0.75);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.model-option-item {
+  width: 100%;
+  padding: 13px 18px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.model-option-item:last-child {
+  border-bottom: none;
+}
+
+.model-option-item:active {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.model-option-item.selected {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.model-option-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.model-option-name {
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
+.model-checkmark {
+  color: #0a84ff;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Фикс пробелов в тексте размышлений */
+.thinking-word {
+  display: inline-flex;
+  white-space: pre;
+}
