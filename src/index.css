@@ -80,8 +80,8 @@ html, body {
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
-.ios-skeleton-box.mini {
-  border-radius: 18px;
+.ios-skeleton-box.game-mock {
+  border-radius: 24px;
 }
 
 @keyframes smoothColorFade {
@@ -94,10 +94,7 @@ html, body {
   height: 100%;
 }
 
-.lottie-player.hidden {
-  display: none;
-}
-
+.lottie-player.hidden { display: none; }
 .lottie-player.visible {
   display: block;
   animation: fadeIn 0.3s ease-out;
@@ -171,7 +168,7 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН ЗАГРУЗКИ (100% ГЛУБОКИЙ ЧЕРНЫЙ БЕЗ ЩЕЛЕЙ)
+   ЭКРАН ЗАГРУЗКИ (С ПЛАВНЫМ РАСТЕМНЕНИЕМ)
    =================================================== */
 
 .loading-screen {
@@ -188,12 +185,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: blackFadeIn 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  opacity: 1;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes blackFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.loading-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .loading-content {
@@ -284,32 +282,29 @@ html, body {
   width: 100%;
   max-width: 360px;
   height: 100%;
-  max-height: 580px;
-  padding: 24px 20px;
-  animation: gameScreenIn 0.4s ease-out forwards;
+  max-height: 620px;
+  padding: 32px 20px 24px;
+  animation: gameScreenIn 0.5s ease-out forwards;
 }
 
 @keyframes gameScreenIn {
-  from { opacity: 0; transform: scale(0.97); }
+  from { opacity: 0; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Верхняя карточка с анимацией и вопросом */
-.game-header-card {
+/* Верхняя область: без рамки и фона */
+.game-header-area {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  gap: 18px;
+  padding: 8px 4px;
 }
 
 .game-lottie-slot {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 90px;
+  height: 90px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -319,27 +314,69 @@ html, body {
 .game-question-block {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   text-align: left;
 }
 
+/* Скругленный жирный стиль MD Rounded / Nunito */
 .game-question-badge {
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.12rem;
+  font-weight: 800;
   letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .game-question-text {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -0.015em;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
   color: #ffffff;
 }
 
-/* 4 кнопки в столбик */
+/* Деликатный индикатор мыслей в центре */
+.ai-thought-space {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+}
+
+.thought-bars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+}
+
+.thought-bars .bar {
+  width: 3px;
+  height: 8px;
+  border-radius: 99px;
+  background-color: rgba(255, 255, 255, 0.2);
+  animation: barPulse 1.6s ease-in-out infinite alternate;
+}
+
+.thought-bars .b1 { animation-delay: 0.1s; }
+.thought-bars .b2 { animation-delay: 0.3s; }
+.thought-bars .b3 { animation-delay: 0.5s; }
+.thought-bars .b4 { animation-delay: 0.7s; }
+.thought-bars .b5 { animation-delay: 0.9s; }
+
+@keyframes barPulse {
+  0% {
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  100% {
+    height: 22px;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* 4 кнопки ответов */
 .game-buttons-group {
   width: 100%;
   display: flex;
