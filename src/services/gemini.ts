@@ -10,22 +10,23 @@ export interface ChatMessage {
   parts: [{ text: string }];
 }
 
-// Официальные поддерживаемые модели Google Gemini API
+// 100% валидные рабочие модели Gemini REST API
 const CANDIDATE_MODELS = [
   'gemini-2.5-flash',
   'gemini-2.0-flash',
-  'gemini-2.5-pro'
+  'gemini-1.5-flash'
 ];
 
 let workingModelCache: string | null = null;
 let systemPromptCache = '';
 
 function getApiKey(): string {
-  const key = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY || '';
-  if (!key) {
-    console.error('⚠️ [Craig] Ключ VITE_GEMINI_API_KEY не обнаружен!');
+  const envKey = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY;
+  if (!envKey || envKey.trim() === '') {
+    console.error('⚠️ [Craig Error] VITE_GEMINI_API_KEY не найден в переменных окружения Vercel!');
+    return '';
   }
-  return key;
+  return envKey.trim();
 }
 
 async function getSystemPrompt(): Promise<string> {
@@ -37,9 +38,9 @@ async function getSystemPrompt(): Promise<string> {
       return systemPromptCache;
     }
   } catch (e) {
-    console.warn('[Craig] Используется резервный системный промпт');
+    console.warn('[Craig] Загружен резервный системный промпт');
   }
-  return `Ты — Крегг, ИИ-Акинатор. Угадывай персонажей. Отвечай только строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
+  return `Ты — Крегг, ИИ-Акинатор. Угадывай персонажей бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
 }
 
 function extractValidJSON(raw: string): AIResponse {
@@ -50,12 +51,16 @@ function extractValidJSON(raw: string): AIResponse {
     if (match) {
       return JSON.parse(match[0]);
     }
-    throw new Error(`Не удалось распарсить JSON: ${raw}`);
+    throw new Error(`Невалидный JSON: ${raw}`);
   }
 }
 
 export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
   const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('API_KEY_MISSING');
+  }
+
   const systemPrompt = await getSystemPrompt();
 
   const modelsToTry = workingModelCache 
@@ -69,7 +74,7 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const payload = {
-        systemInstruction: {
+        system_instruction: {
           parts: [{ text: systemPrompt }]
         },
         contents: history,
@@ -86,8 +91,8 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
       });
 
       if (!response.ok) {
-        const errText = await response.text();
-        console.warn(`[Craig] Ошибка модели ${model} (${response.status}):`, errText);
+        const errDetails = await response.text();
+        console.warn(`[Craig] Ошибка вызова модели ${model} (${response.status}):`, errDetails);
         continue;
       }
 
@@ -98,10 +103,11 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
 
       const parsed = extractValidJSON(rawText);
       workingModelCache = model;
+      console.log(`[Craig AI] Ответ получен от ${model}:`, parsed);
       return parsed;
 
     } catch (err: any) {
-      console.warn(`[Craig] Исключение с моделью ${model}:`, err.message);
+      console.warn(`[Craig AI] Исключение с моделью ${model}:`, err.message);
       lastError = err;
     }
   }
