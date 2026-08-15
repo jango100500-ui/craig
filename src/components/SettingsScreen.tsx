@@ -22,17 +22,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
     setIsClosing(true);
     setTimeout(() => {
       onClose();
-    }, 220); // Быстрое плавное растемнение
+    }, 220);
   };
 
   return (
     <div className={`settings-screen-overlay ${isClosing ? 'closing' : ''}`}>
       <div className="settings-container">
-        {/* Шапка настроек */}
         <header className="settings-header">
           <h2 className="settings-title">НАСТРОЙКИ</h2>
 
-          {/* Круглая стеклянная кнопка закрытия с Cross.png */}
           <button 
             type="button" 
             className="settings-close-round-btn"
@@ -47,7 +45,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
                 (e.target as HTMLElement).style.display = 'none';
               }}
             />
-            {/* Резервный крестик */}
             <svg className="cross-svg-fallback" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -55,9 +52,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
           </button>
         </header>
 
-        {/* Секция выбора модели */}
         <div className="settings-section">
-          {/* Стеклянная капсула пониженной высоты */}
           <button 
             type="button"
             className={`model-capsule-btn ${isOpenList ? 'active' : ''}`}
@@ -78,10 +73,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
           </button>
 
           <p className="settings-caption">
-            Выберите модель для Крегга. При сбое будет автоматически задействована резервная.
+            Выберите приоритетную модель. При исчерпании квоты Крегг автоматически продолжит игру на других моделях семейства 3.x.
           </p>
 
-          {/* Выпадающий список моделей */}
           {isOpenList && (
             <div className="models-dropdown-list">
               {AVAILABLE_MODELS.map((model) => {
