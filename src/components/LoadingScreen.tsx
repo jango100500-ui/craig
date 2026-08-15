@@ -9,9 +9,9 @@ interface LoadingScreenProps {
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [fillProgress, setFillProgress] = useState(0);
   const [duration, setDuration] = useState(2000);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Случайное время заполнения от 1 до 3 секунд
     const randomDuration = Math.floor(Math.random() * 2000) + 1000;
     setDuration(randomDuration);
 
@@ -19,19 +19,25 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       setFillProgress(100);
     }, 150);
 
-    // Завершение загрузки и автоматический переход к игре
+    // Запуск «растемнения» после окончания заполнения
+    const fadeTimer = setTimeout(() => {
+      setIsFadingOut(true);
+    }, randomDuration + 200);
+
+    // Полное переключение на игру после растворения экрана
     const completeTimer = setTimeout(() => {
       onComplete();
-    }, randomDuration + 400);
+    }, randomDuration + 700);
 
     return () => {
       clearTimeout(startTimer);
+      clearTimeout(fadeTimer);
       clearTimeout(completeTimer);
     };
   }, [onComplete]);
 
   return (
-    <div className="loading-screen">
+    <div className={`loading-screen ${isFadingOut ? 'fade-out' : ''}`}>
       <div className="loading-content">
         <div className="loading-icon-wrapper">
           <img 
