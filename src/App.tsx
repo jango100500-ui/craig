@@ -1,21 +1,25 @@
 import React from 'react';
 
 export const App: React.FC = () => {
-  const handleStartGame = () => {
-    // В будущем здесь будет переход к экрану вопросов Craig
-    console.log('Игра начата!');
+  const handleStart = () => {
+    console.log('Игрок загадал персонажа!');
   };
 
   return (
     <main className="screen-container">
-      <h1 className="hero-title">
-        Загадай персонажа и я постараюсь его угадать
-      </h1>
+      <div className="text-group">
+        <h1 className="hero-title">
+          Загадай любого персонажа
+        </h1>
+        <p className="hero-subtitle">
+          Я попробую угадать его, кем бы он ни был
+        </p>
+      </div>
 
       <button 
         type="button" 
-        className="liquid-amber-btn"
-        onClick={handleStartGame}
+        className="ios-glass-btn"
+        onClick={handleStart}
       >
         Я загадал!
       </button>
