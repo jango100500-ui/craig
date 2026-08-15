@@ -1,12 +1,15 @@
 :root {
-  --bg-color: #121214;
-  --text-color: #f3f4f6;
-  --amber-glass: rgba(245, 158, 11, 0.85);
-  --amber-border: rgba(245, 158, 11, 1);
-  --amber-glow: rgba(245, 158, 11, 0.25);
+  --bg-color: #0b0c0e; /* Глубокий темный фон как на референсе */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.75);
+  
+  /* Переменные для iOS Dark Glass */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-active: rgba(255, 255, 255, 0.14);
 }
 
-/* Полный запрет выделения текста, картинок и жестов масштабирования */
+/* Полный запрет выделения, зума и свайп-подсветок */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -24,8 +27,12 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-primary);
+  
+  /* Классический нативный стек шрифтов Apple iOS */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -34,70 +41,79 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Учет безопасных зон для "челок" iPhone */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* Главный контейнер экрана */
+/* Контейнер по центру */
 .screen-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 380px;
-  padding: 24px;
-}
-
-/* Текст по центру */
-.hero-title {
-  font-size: 1.25rem;
-  font-weight: 500;
-  line-height: 1.45;
+  max-width: 360px;
+  padding: 0 24px;
   text-align: center;
-  color: #e5e7eb;
-  letter-spacing: -0.01em;
-  margin-bottom: 28px;
+}
+
+/* Блок с текстами */
+.text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 32px;
   width: 100%;
 }
 
-/* Кнопка в стиле iOS Liquid Glass */
-.liquid-amber-btn {
+.hero-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+.hero-subtitle {
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-secondary);
+}
+
+/* Кнопка iOS Liquid Dark Glass */
+.ios-glass-btn {
   width: 100%;
-  padding: 16px 24px;
-  background: var(--amber-glass);
+  padding: 16px 28px;
   
-  /* Эффект Liquid Glass */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--glass-bg);
   
-  /* Тонкая рамка 100% непрозрачности */
-  border: 1px solid var(--amber-border);
-  border-radius: 9999px;
+  /* Размытие подложки под кнопкой */
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  
+  /* Тонкий контур, чуть светлее кнопки */
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px; /* Полностью круглые углы (pill) */
   
   /* Текст кнопки */
   color: #ffffff;
-  font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem;
+  font-family: inherit;
+  font-size: 1.15rem;
   font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-
+  letter-spacing: -0.015em;
+  
   cursor: pointer;
   outline: none;
+  box-shadow: none; /* Без внешнего свечения */
   
-  /* Внутренний и внешний объем/свечение */
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.35),
-    0 8px 24px var(--amber-glow);
-
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              background-color 0.15s ease;
 }
 
-/* Интерактив при нажатии */
-.liquid-amber-btn:active {
+/* Ощущение нажатия на кнопку в iOS */
+.ios-glass-btn:active {
   transform: scale(0.96);
-  opacity: 0.95;
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    0 4px 12px var(--amber-glow);
+  background: var(--glass-active);
+  border-color: rgba(255, 255, 255, 0.25);
 }
