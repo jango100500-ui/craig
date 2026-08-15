@@ -16,30 +16,37 @@ export interface ModelOption {
   tag?: string;
 }
 
-// Только официально поддерживаемые и активные модели Google
+// Полный пул моделей семейства 3.x и 2.5
 export const AVAILABLE_MODELS: ModelOption[] = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tag: 'Рекомендуемая' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tag: 'Максимальный ум' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tag: 'Ультра-быстрая' },
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tag: 'Новое поколение' }
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', tag: 'Рекомендуемая' },
+  { id: 'gemini-3.6-flash-lite', name: 'Gemini 3.6 Flash Lite', tag: 'Ультра-быстрая' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash' },
+  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite' },
+  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', tag: 'Новинка' },
+  { id: 'gemini-3.7-flash-lite', name: 'Gemini 3.7 Flash Lite' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', tag: 'Максимальный ум' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' }
 ];
 
 const STORAGE_KEY = 'craig_selected_model';
 
 export function getSelectedModelId(): string {
-  return localStorage.getItem(STORAGE_KEY) || 'gemini-2.5-flash';
+  return localStorage.getItem(STORAGE_KEY) || 'gemini-3.6-flash';
 }
 
 export function setSelectedModelId(modelId: string): void {
   localStorage.setItem(STORAGE_KEY, modelId);
 }
 
-function getApiKey(): string {
+// Поддержка одного или нескольких ключей через запятую: "AIza...,AIza..."
+function getApiKeys(): string[] {
   const envKey = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY;
   if (!envKey || envKey.trim() === '') {
     throw new Error('API-ключ VITE_GEMINI_API_KEY не найден в переменных Vercel / .env.local');
   }
-  return envKey.trim();
+  return envKey.split(',').map(k => k.trim()).filter(Boolean);
 }
 
 async function getSystemPrompt(): Promise<string> {
@@ -51,7 +58,7 @@ async function getSystemPrompt(): Promise<string> {
   } catch (e) {
     console.warn('[Craig] Загружен резервный системный промпт');
   }
-  return `Ты — Крегг, ИИ-Акинатор. Твоя цель — угадать загаданного персонажа бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
+  return `Ты — Крегг, ИИ-Акинатор. Угадывай персонажей бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
 }
 
 function extractValidJSON(raw: string): AIResponse {
@@ -67,60 +74,67 @@ function extractValidJSON(raw: string): AIResponse {
 }
 
 export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
-  const apiKey = getApiKey();
+  const keys = getApiKeys();
   const systemPrompt = await getSystemPrompt();
 
   const userChosen = getSelectedModelId();
-  const modelsToTry = [
+  // Модель пользователя идет первой, а за ней весь огромный пул 3.x моделей для ротации
+  const allModels = [
     userChosen,
     ...AVAILABLE_MODELS.map(m => m.id).filter(id => id !== userChosen)
   ];
 
   let lastErrorMsg = '';
 
-  for (const model of modelsToTry) {
-    try {
-      console.log(`[Craig AI] Запрос к модели: ${model}`);
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  // Перебираем ключи и модели: если одна уперлась в 429, мгновенно пробуем следующую
+  for (const apiKey of keys) {
+    for (const model of allModels) {
+      try {
+        console.log(`[Craig AI] Запрос к ${model}...`);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      const payload = {
-        system_instruction: {
-          parts: [{ text: systemPrompt }]
-        },
-        contents: history,
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.7
+        const payload = {
+          system_instruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          contents: history,
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.7
+          }
+        };
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errDetails = await response.text();
+          // Если 429 (лимит квоты) или 404 — сразу переходим к следующей модели!
+          console.warn(`[Craig AI] Модель ${model} вернула статус ${response.status}. Авто-переключение на другую модель...`);
+          lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
+          continue;
         }
-      };
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+        const data = await response.json();
+        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-      if (!response.ok) {
-        const errDetails = await response.text();
-        lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
-        console.warn(`[Craig AI] Модель ${model} недоступна (${response.status}), переключаемся...`);
-        continue;
+        if (!rawText) {
+          continue;
+        }
+
+        const parsed = extractValidJSON(rawText);
+        console.log(`✅ [Craig AI] Успешный ответ от ${model}:`, parsed);
+        return parsed;
+
+      } catch (err: any) {
+        console.warn(`[Craig AI] Ошибка с ${model}:`, err.message);
+        lastErrorMsg = err.message || String(err);
       }
-
-      const data = await response.json();
-      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!rawText) continue;
-
-      const parsed = extractValidJSON(rawText);
-      console.log(`✅ [Craig AI] Успешный ответ от ${model}:`, parsed);
-      return parsed;
-
-    } catch (err: any) {
-      lastErrorMsg = err.message || String(err);
-      console.warn(`[Craig AI] Ошибка модели ${model}:`, lastErrorMsg);
     }
   }
 
-  throw new Error(lastErrorMsg || 'Все доступные модели Gemini временно недоступны');
+  throw new Error(lastErrorMsg || 'Все доступные модели временно исчерпали квоту. Попробуйте через минуту.');
 }
