@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import lottie from 'lottie-web';
 import { LoadingScreen } from './components/LoadingScreen';
+import { GameScreen } from './components/GameScreen';
 
 const BUTTON_OPTIONS = [
   'Я загадал!',
@@ -12,7 +13,7 @@ const BUTTON_OPTIONS = [
 export const App: React.FC = () => {
   const lottieContainer = useRef<HTMLDivElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'loading'>('home');
+  const [currentScreen, setCurrentScreen] = useState<'home' | 'loading' | 'game'>('home');
 
   const [buttonText] = useState(() => {
     const randomIndex = Math.floor(Math.random() * BUTTON_OPTIONS.length);
@@ -58,6 +59,10 @@ export const App: React.FC = () => {
     setCurrentScreen('loading');
   };
 
+  const handleLoadingComplete = () => {
+    setCurrentScreen('game');
+  };
+
   return (
     <>
       <div className="landscape-lock-overlay">
@@ -65,9 +70,15 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      {currentScreen === 'loading' ? (
-        <LoadingScreen />
-      ) : (
+      {currentScreen === 'loading' && (
+        <LoadingScreen onComplete={handleLoadingComplete} />
+      )}
+
+      {currentScreen === 'game' && (
+        <GameScreen />
+      )}
+
+      {currentScreen === 'home' && (
         <main className="screen-container">
           <div className="animation-slot">
             {!isLoaded && <div className="ios-skeleton-box" />}
