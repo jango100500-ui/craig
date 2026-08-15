@@ -6,7 +6,6 @@ export const App: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Блокировка ориентации на мобильных устройствах
     if (window.screen?.orientation && 'lock' in window.screen.orientation) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window.screen.orientation as any).lock('portrait').catch(() => {});
@@ -14,10 +13,10 @@ export const App: React.FC = () => {
 
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-    // Загрузка Lottie с кэш-бастингом для надежности
-    fetch(`/hi.json?t=${Date.now()}`)
+    // Загрузка Hi.json (с заглавной буквы)
+    fetch(`/Hi.json?t=${Date.now()}`)
       .then((res) => {
-        if (!res.ok) throw new Error('Файл hi.json не найден');
+        if (!res.ok) throw new Error('Файл Hi.json не найден');
         return res.json();
       })
       .then((animationData) => {
@@ -48,19 +47,17 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Заглушка при горизонтальном повороте */}
       <div className="landscape-lock-overlay">
         <h2>Пожалуйста, поверните устройство</h2>
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
       <main className="screen-container">
-        {/* Блок анимации / Скелетон */}
         <div className="animation-slot">
-          {/* Скелетон (показывается пока нет анимации или идет загрузка) */}
+          {/* Чистый пульсирующий мок-квадрат */}
           {!isLoaded && <div className="ios-skeleton-box" />}
 
-          {/* Контейнер для Lottie */}
+          {/* Lottie анимация */}
           <div 
             ref={lottieContainer} 
             className={`lottie-player ${isLoaded ? 'visible' : 'hidden'}`} 
