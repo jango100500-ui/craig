@@ -1,15 +1,30 @@
-import React, { useEffect } from 'react';
-import { PhysicsPills } from './components/PhysicsPills';
+import React, { useEffect, useRef } from 'react';
+import lottie from 'lottie-web';
 
 export const App: React.FC = () => {
+  const lottieContainer = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     // Блокировка ориентации на поддерживаемых устройствах
     if (window.screen?.orientation && 'lock' in window.screen.orientation) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window.screen.orientation as any).lock('portrait').catch(() => {
-        // Игнорируем ошибку, если браузер не поддерживает строгую блокировку
-      });
+      (window.screen.orientation as any).lock('portrait').catch(() => {});
     }
+
+    // Инициализация Lottie-анимации из public/hi.json
+    if (!lottieContainer.current) return;
+
+    const anim = lottie.loadAnimation({
+      container: lottieContainer.current,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: '/hi.json',
+    });
+
+    return () => {
+      anim.destroy();
+    };
   }, []);
 
   const handleStart = () => {
@@ -18,21 +33,22 @@ export const App: React.FC = () => {
 
   return (
     <>
-      {/* Предупреждение при горизонтальном повороте */}
+      {/* Заглушка при горизонтальном повороте смартфона */}
       <div className="landscape-lock-overlay">
         <h2>Пожалуйста, поверните устройство</h2>
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      <PhysicsPills />
-
       <main className="screen-container">
+        {/* Lottie-анимация над заголовком */}
+        <div ref={lottieContainer} className="lottie-wrapper" />
+
         <div className="text-group">
           <h1 className="hero-title">
             Загадай любого персонажа
           </h1>
           <p className="hero-subtitle">
-            Я попробую угадать его, кем бы он ни был
+            Это может быть реальный человек, герой фильма, сериала, игры или аниме. Я задам несколько вопросов и попробую угадать, кого ты задумал.
           </p>
         </div>
 
