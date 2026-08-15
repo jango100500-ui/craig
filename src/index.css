@@ -34,8 +34,10 @@ html, body {
 
 #root {
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -52,7 +54,7 @@ html, body {
   text-align: center;
 }
 
-/* Слот под Lottie / Скелетон */
+/* Слот анимации */
 .animation-slot {
   position: relative;
   width: 136px;
@@ -101,7 +103,7 @@ html, body {
   height: 100% !important;
 }
 
-/* Текстовая группа */
+/* Тексты главного экрана */
 .text-group {
   display: flex;
   flex-direction: column;
@@ -127,7 +129,7 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* iOS Кнопка */
+/* Кнопка */
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
@@ -157,50 +159,52 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН ЗАГРУЗКИ (LOADING SCREEN)
+   ЭКРАН ЗАГРУЗКИ (100% ЧЕРНЫЙ ФОН И МАРМЕЛАДНЫЙ ТЕКСТ)
    =================================================== */
 
 .loading-screen {
   position: fixed;
   inset: 0;
-  background-color: #000000;
-  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #000000; /* Абсолютно сплошной черный */
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: blackFadeIn 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes blackFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.loading-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: screenFadeToBlack 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
-@keyframes screenFadeToBlack {
-  from {
-    opacity: 0;
-    background-color: var(--bg-color);
-  }
-  to {
-    opacity: 1;
-    background-color: #000000;
-  }
-}
-
-/* Контейнер иконки по центру */
+/* Иконка в центре */
 .loading-icon-wrapper {
   position: relative;
-  width: 84px;
-  height: 84px;
-  margin-bottom: 40px;
+  width: 88px;
+  height: 88px;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: iconFadeIn 0.4s ease-out 0.15s backwards;
+  animation: iconSpringIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 
-@keyframes iconFadeIn {
-  from {
+@keyframes iconSpringIn {
+  0% {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.8);
   }
-  to {
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -212,48 +216,83 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* Делает PNG иконку чисто белой */
   filter: brightness(0) invert(1);
 }
 
-/* Базовая иконка с прозрачностью 0.2 */
 .loading-icon.base {
   opacity: 0.2;
 }
 
-/* Слой заполнения сверху вниз с прозрачностью 0.3 */
 .loading-icon.fill {
   opacity: 0.3;
-  clip-path: inset(100% 0 0 0);
-  animation: fillIconTopToBottom 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+  will-change: clip-path;
 }
 
-@keyframes fillIconTopToBottom {
-  0% {
-    clip-path: inset(0 0 100% 0); /* скрыто снизу */
-  }
-  100% {
-    clip-path: inset(0 0 0% 0);   /* полностью открыто */
-  }
-}
-
-/* Нижний блок текста загрузки */
+/* Текст «Загрузка...» сразу под иконкой */
 .loading-status {
-  position: absolute;
-  bottom: calc(48px + env(safe-area-inset-bottom));
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: rgba(255, 255, 255, 0.65);
+  margin-top: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.loading-dots {
+.loading-word {
+  display: flex;
+  align-items: center;
+}
+
+/* Мармеладное появление букв */
+.jelly-char {
   display: inline-block;
-  min-width: 18px;
-  text-align: left;
+  opacity: 0;
+  transform-origin: center bottom;
+  animation: jellyPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes jellyPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(12px);
+  }
+  50% {
+    transform: scale(1.22, 0.82) translateY(-4px);
+  }
+  75% {
+    transform: scale(0.92, 1.08) translateY(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Пружинящие точки */
+.loading-dots {
+  display: flex;
+  align-items: center;
+}
+
+.jelly-dot {
+  display: inline-block;
+  font-size: 1.25rem;
+  line-height: 1;
+  transform-origin: center bottom;
+  animation: jellyDotWave 1.4s ease-in-out infinite;
+}
+
+@keyframes jellyDotWave {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.35, 0.75);
+    opacity: 1;
+  }
 }
 
 /* Заглушка ориентации */
@@ -265,8 +304,8 @@ html, body {
   .landscape-lock-overlay {
     position: fixed;
     inset: 0;
-    z-index: 9999;
-    background-color: var(--bg-color);
+    z-index: 999999;
+    background-color: #000000;
     display: flex;
     flex-direction: column;
     align-items: center;
