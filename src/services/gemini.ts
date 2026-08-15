@@ -10,8 +10,17 @@ export interface ChatMessage {
   parts: [{ text: string }];
 }
 
-// 100% стабильные модели Google API
-const MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash'];
+// Актуальные модели Google Gemini API в порядке приоритета
+const CANDIDATE_MODELS = [
+  'gemini-3.6-flash',
+  'gemini-3.5-flash',
+  'gemini-3.7-flash',
+  'gemini-2.5-flash',
+  'gemini-1.5-flash'
+];
+
+let workingModelCache: string | null = null;
+let systemPromptCache = '';
 
 function getApiKey(): string {
   const envKey = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY;
@@ -22,25 +31,45 @@ function getApiKey(): string {
 }
 
 async function getSystemPrompt(): Promise<string> {
+  if (systemPromptCache) return systemPromptCache;
   try {
     const res = await fetch(`/Prompt.txt?t=${Date.now()}`);
     if (res.ok) {
-      return await res.text();
+      systemPromptCache = await res.text();
+      return systemPromptCache;
     }
   } catch (e) {
-    console.warn('Не удалось загрузить Prompt.txt');
+    console.warn('[Craig] Используется встроенный системный промпт');
   }
-  return `Ты — Крегг, ИИ-Акинатор. Угадывай персонажей на русском языке. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
+  return `Ты — Крегг, ИИ-Акинатор. Твоя цель — угадать загаданного персонажа бинарным поиском. Отвечай ТОЛЬКО валидным JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
+}
+
+function extractValidJSON(raw: string): AIResponse {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      return JSON.parse(match[0]);
+    }
+    throw new Error(`Ответ не содержит корректного JSON: ${raw}`);
+  }
 }
 
 export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
   const apiKey = getApiKey();
   const systemPrompt = await getSystemPrompt();
 
+  // Если уже нашли рабочую модель — пробуем её первой
+  const modelsToTry = workingModelCache 
+    ? [workingModelCache, ...CANDIDATE_MODELS.filter(m => m !== workingModelCache)]
+    : CANDIDATE_MODELS;
+
   let lastErrorMsg = '';
 
-  for (const model of MODELS) {
+  for (const model of modelsToTry) {
     try {
+      console.log(`[Craig AI] Пробуем модель: ${model}...`);
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const payload = {
@@ -61,31 +90,32 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
       });
 
       if (!response.ok) {
-        const errText = await response.text();
-        lastErrorMsg = `HTTP ${response.status}: ${errText}`;
-        console.error(`Ошибка Gemini (${model}):`, lastErrorMsg);
-        continue;
+        const errDetails = await response.text();
+        lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
+        console.warn(`[Craig AI] Модель ${model} недоступна (${response.status}), переключаемся на следующую...`);
+        continue; // Бесшовно пробуем следующую модель
       }
 
       const data = await response.json();
       const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!rawText) {
-        throw new Error('Модель вернула пустой ответ');
+        console.warn(`[Craig AI] Пустой ответ от ${model}, пробуем следующую...`);
+        continue;
       }
 
-      // Извлекаем чистый JSON
-      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error(`Ответ модели не содержит JSON: ${rawText}`);
-      }
+      const parsed = extractValidJSON(rawText);
+      
+      // Запоминаем рабочую модель для следующих вопросов
+      workingModelCache = model;
+      console.log(`✅ [Craig AI] Успешный ответ от модели ${model}:`, parsed);
+      return parsed;
 
-      return JSON.parse(jsonMatch[0]) as AIResponse;
     } catch (err: any) {
       lastErrorMsg = err.message || String(err);
-      console.warn(`Попытка с ${model} не удалась:`, lastErrorMsg);
+      console.warn(`[Craig AI] Ошибка с моделью ${model}:`, lastErrorMsg);
     }
   }
 
-  throw new Error(lastErrorMsg || 'Не удалось связаться с Gemini API');
+  throw new Error(lastErrorMsg || 'Все модели Gemini временно недоступны');
 }
