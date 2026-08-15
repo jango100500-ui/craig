@@ -3,10 +3,10 @@ import lottie from 'lottie-web';
 
 export const App: React.FC = () => {
   const lottieContainer = useRef<HTMLDivElement | null>(null);
-  const [lottieLoaded, setLottieLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Блокировка ориентации на поддерживаемых устройствах
+    // Блокировка ориентации на мобильных устройствах
     if (window.screen?.orientation && 'lock' in window.screen.orientation) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window.screen.orientation as any).lock('portrait').catch(() => {});
@@ -14,15 +14,15 @@ export const App: React.FC = () => {
 
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-    // Пытаемся безопасно загрузить hi.json
-    fetch('/hi.json')
+    // Загрузка Lottie с кэш-бастингом для надежности
+    fetch(`/hi.json?t=${Date.now()}`)
       .then((res) => {
-        if (!res.ok) throw new Error('hi.json не найден');
+        if (!res.ok) throw new Error('Файл hi.json не найден');
         return res.json();
       })
       .then((animationData) => {
         if (!lottieContainer.current) return;
-        
+
         anim = lottie.loadAnimation({
           container: lottieContainer.current,
           renderer: 'svg',
@@ -31,11 +31,10 @@ export const App: React.FC = () => {
           animationData,
         });
 
-        setLottieLoaded(true);
+        setIsLoaded(true);
       })
       .catch(() => {
-        // Если файла нет или оффлайн — остаемся на моковом аватаре
-        setLottieLoaded(false);
+        setIsLoaded(false);
       });
 
     return () => {
@@ -56,22 +55,16 @@ export const App: React.FC = () => {
       </div>
 
       <main className="screen-container">
-        {/* Контейнер анимации / Моковый аватар */}
-        <div className="lottie-wrapper">
-          {/* Сюда монтируется Lottie, если файл hi.json есть */}
+        {/* Блок анимации / Скелетон */}
+        <div className="animation-slot">
+          {/* Скелетон (показывается пока нет анимации или идет загрузка) */}
+          {!isLoaded && <div className="ios-skeleton-box" />}
+
+          {/* Контейнер для Lottie */}
           <div 
             ref={lottieContainer} 
-            className={`lottie-player ${lottieLoaded ? 'visible' : 'hidden'}`} 
+            className={`lottie-player ${isLoaded ? 'visible' : 'hidden'}`} 
           />
-
-          {/* Моковый красивый iOS Glass Orb (если файла нет или идет загрузка) */}
-          {!lottieLoaded && (
-            <div className="mock-orb">
-              <div className="mock-orb-core" />
-              <div className="mock-orb-ring" />
-              <div className="mock-orb-sparkle">✦</div>
-            </div>
-          )}
         </div>
 
         <div className="text-group">
