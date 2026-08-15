@@ -36,41 +36,46 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Канвас на фоне */
-.physics-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* UI экран */
+/* Главный экран по центру */
 .screen-container {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  max-width: 360px;
   padding: 0 24px;
-  pointer-events: none;
+  text-align: center;
 }
 
+/* Контейнер анимации Lottie среднего размера */
+.lottie-wrapper {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lottie-wrapper svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Текстовая группа */
 .text-group {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   gap: 12px;
   margin-bottom: 34px;
-  max-width: 330px;
+  width: 100%;
 }
 
 .hero-title {
@@ -82,18 +87,17 @@ html, body {
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: -0.015em;
+  line-height: 1.45;
+  letter-spacing: -0.012em;
   color: var(--text-secondary);
 }
 
-/* Чистая плоская iOS кнопка (без градиента) */
+/* iOS Glass кнопка */
 .ios-glass-btn {
-  pointer-events: auto;
   width: 100%;
-  max-width: 310px;
+  max-width: 320px;
   padding: 17px 24px;
   
   background: var(--glass-bg);
@@ -124,7 +128,7 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Заглушка для блокировки горизонтального режима на смартфонах */
+/* Заглушка для горизонтального экрана */
 .landscape-lock-overlay {
   display: none;
 }
@@ -141,11 +145,15 @@ html, body {
     justify-content: center;
     padding: 20px;
     text-align: center;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .landscape-lock-overlay h2 {
+    font-size: 1.2rem;
   }
 
   .landscape-lock-overlay p {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
   }
 }
