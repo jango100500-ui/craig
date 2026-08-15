@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import Matter from 'matter-js';
 
-// Более мягкая, пастельно-стеклянная iOS-палитра
+// Чистые плоские полупрозрачные цвета iOS без градиентов
 const IOS_GLASS_PALETTE = [
-  'rgba(255, 89, 94, 0.52)',   // Soft Red
-  'rgba(255, 149, 0, 0.52)',   // Warm Orange
-  'rgba(255, 204, 0, 0.48)',   // Amber Yellow
-  'rgba(52, 199, 89, 0.52)',   // Mint Green
-  'rgba(90, 200, 250, 0.52)',  // Sky Cyan
-  'rgba(0, 122, 255, 0.52)',   // Royal Blue
-  'rgba(175, 82, 222, 0.52)',  // Soft Violet
-  'rgba(255, 45, 85, 0.52)'    // Berry Pink
+  'rgba(255, 69, 58, 0.62)',   // iOS Red
+  'rgba(255, 149, 0, 0.62)',  // iOS Orange
+  'rgba(255, 204, 0, 0.58)',  // iOS Yellow
+  'rgba(50, 215, 75, 0.62)',  // iOS Green
+  'rgba(10, 132, 255, 0.62)', // iOS Blue
+  'rgba(175, 82, 222, 0.62)', // iOS Purple
+  'rgba(255, 55, 95, 0.62)',  // iOS Pink
+  'rgba(90, 200, 250, 0.62)', // iOS Cyan
 ];
 
 const CHARACTERS = [
@@ -68,19 +68,32 @@ export const PhysicsPills: React.FC = () => {
     ctx.scale(dpr, dpr);
 
     const { Engine, World, Bodies, Body } = Matter;
+    
+    // Мягкая гравитация
     const engine = Engine.create({
-      gravity: { x: 0, y: 1.1, scale: 0.001 }
+      gravity: { x: 0, y: 0.9, scale: 0.001 }
     });
     const world = engine.world;
 
     // Границы экрана
     const wallThickness = 120;
-    const ground = Bodies.rectangle(width / 2, height + wallThickness / 2, width * 2, wallThickness, { isStatic: true });
-    const leftWall = Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height * 2, { isStatic: true });
-    const rightWall = Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height * 2, { isStatic: true });
-    const ceiling = Bodies.rectangle(width / 2, -wallThickness / 2 - 100, width * 2, wallThickness, { isStatic: true });
+    const ground = Bodies.rectangle(width / 2, height + wallThickness / 2, width * 2, wallThickness, { 
+      isStatic: true, 
+      friction: 0.1 
+    });
+    const leftWall = Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height * 2, { 
+      isStatic: true, 
+      friction: 0 
+    });
+    const rightWall = Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height * 2, { 
+      isStatic: true, 
+      friction: 0 
+    });
+    const ceiling = Bodies.rectangle(width / 2, -wallThickness / 2 - 150, width * 2, wallThickness, { 
+      isStatic: true 
+    });
 
-    // Физическое тело кнопки (колбочки будут падать и опираться на нее)
+    // Физическое препятствие кнопки (со скользкой гранью, чтобы не застревали)
     let buttonBody: Matter.Body | null = null;
 
     const updateButtonBody = () => {
@@ -94,8 +107,8 @@ export const PhysicsPills: React.FC = () => {
           buttonBody = Bodies.rectangle(btnX, btnY, rect.width, rect.height, {
             isStatic: true,
             chamfer: { radius: rect.height / 2 },
-            friction: 0.5,
-            restitution: 0.2
+            friction: 0.0,      // Полная скользкость — колбочки скатываются по бокам
+            restitution: 0.6    // Пружинящий легкий отскок
           });
           World.add(world, buttonBody);
         } else {
@@ -107,36 +120,34 @@ export const PhysicsPills: React.FC = () => {
     World.add(world, [ground, leftWall, rightWall, ceiling]);
     updateButtonBody();
 
-    // Создание колбочек с небольшим зазором (gap)
+    // Создание легких колбочек
     const pillBodies: PillBody[] = [];
     const pillHeight = 32;
-    const spacingMargin = 4; // физический отступ между элементами
 
     CHARACTERS.forEach((charName, index) => {
-      const visualWidth = Math.max(88, charName.length * 9.2 + 26);
-      const physicsWidth = visualWidth + spacingMargin;
-      const physicsHeight = pillHeight + spacingMargin;
+      const pillWidth = Math.max(88, charName.length * 9.2 + 24);
 
-      // Спавн чуть выше кнопки с разбросом
-      const startX = width / 2 + (Math.random() - 0.5) * 120;
-      const startY = height * 0.35 + (Math.random() - 0.5) * 80;
+      // Спавним сверху в центре с легким раскидыванием в стороны
+      const startX = width / 2 + (Math.random() - 0.5) * 140;
+      const startY = height * 0.28 + (Math.random() - 0.5) * 120;
 
-      const body = Bodies.rectangle(startX, startY, physicsWidth, physicsHeight, {
-        chamfer: { radius: physicsHeight / 2 },
-        restitution: 0.25, // приятный мягкий отскок
-        friction: 0.4,
-        frictionAir: 0.025,
-        angle: (Math.random() - 0.5) * 0.6
+      const body = Bodies.rectangle(startX, startY, pillWidth, pillHeight, {
+        chamfer: { radius: pillHeight / 2 },
+        restitution: 0.45,   // Упругий приятный отскок
+        friction: 0.05,      // Практически не цепляются друг за друга
+        frictionAir: 0.015,  // Легкое ощущение плавного полета в воздухе
+        angle: (Math.random() - 0.5) * 0.7
       }) as PillBody;
 
       body.textLabel = charName;
       body.pillColor = IOS_GLASS_PALETTE[index % IOS_GLASS_PALETTE.length];
-      body.pillWidth = visualWidth;
+      body.pillWidth = pillWidth;
       body.pillHeight = pillHeight;
 
+      // Первоначальный импульс раскидывания
       Body.setVelocity(body, {
-        x: (Math.random() - 0.5) * 6,
-        y: (Math.random() - 0.5) * 4 - 2
+        x: (Math.random() - 0.5) * 9,
+        y: (Math.random() - 0.5) * 6 - 2
       });
 
       pillBodies.push(body);
@@ -147,15 +158,15 @@ export const PhysicsPills: React.FC = () => {
     // Гироскоп с плавным воздействием
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma === null || e.beta === null) return;
-      const gx = Math.min(Math.max(e.gamma / 30, -1.6), 1.6);
-      const gy = Math.min(Math.max(e.beta / 30, -1.6), 1.6);
+      const gx = Math.min(Math.max(e.gamma / 28, -1.8), 1.8);
+      const gy = Math.min(Math.max(e.beta / 28, -1.8), 1.8);
       engine.gravity.x = gx;
       engine.gravity.y = Math.max(gy, 0.4);
     };
 
     window.addEventListener('deviceorientation', handleOrientation);
 
-    // Запрос прав на iOS
+    // Разрешение для датчиков на iOS 13+
     const requestMotionPermission = () => {
       if (
         typeof DeviceOrientationEvent !== 'undefined' &&
@@ -168,7 +179,7 @@ export const PhysicsPills: React.FC = () => {
     };
     window.addEventListener('click', requestMotionPermission, { once: true });
 
-    // Обработка изменения размера экрана
+    // Обработка ресайза
     const handleResize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -183,7 +194,7 @@ export const PhysicsPills: React.FC = () => {
 
     window.addEventListener('resize', handleResize);
 
-    // Рендер-цикл
+    // Цикл отрисовки
     let animationFrameId: number;
     let lastTime = performance.now();
 
@@ -205,7 +216,7 @@ export const PhysicsPills: React.FC = () => {
         ctx.translate(x, y);
         ctx.rotate(angle);
 
-        // 1. Контур капсулы
+        // 1. Форма скругленной капсулы
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(-w / 2, -h / 2, w, h, r);
@@ -215,24 +226,16 @@ export const PhysicsPills: React.FC = () => {
           ctx.closePath();
         }
 
-        // 2. Базовый полупрозрачный цвет
+        // 2. Чистый матовый цвет (без градиента)
         ctx.fillStyle = body.pillColor;
         ctx.fill();
 
-        // 3. Эффект стекла (световой блик сверху вниз)
-        const glassGrad = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
-        glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.26)');
-        glassGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.05)');
-        glassGrad.addColorStop(1, 'rgba(0, 0, 0, 0.12)');
-        ctx.fillStyle = glassGrad;
-        ctx.fill();
-
-        // 4. Тонкий контур стекла
+        // 3. Тонкий аккуратный контур
         ctx.lineWidth = 1;
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
         ctx.stroke();
 
-        // 5. Текст персонажа
+        // 4. Четкий белый текст
         ctx.fillStyle = '#ffffff';
         ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif';
         ctx.textAlign = 'center';
