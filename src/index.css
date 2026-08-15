@@ -1,12 +1,13 @@
 :root {
-  --bg-color: #0c0d10;
+  --bg-color: #0b0c0f;
   --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.82);
-  --glass-bg: rgba(30, 32, 40, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-active: rgba(45, 48, 60, 0.8);
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --glass-bg: rgba(28, 30, 38, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1); /* Деликатный, менее яркий контур */
+  --glass-active: rgba(45, 48, 60, 0.75);
 }
 
+/* Полная блокировка выделения и жестов */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -17,10 +18,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Фиксация страницы без скролла вверх/вниз и "резинки" iOS */
 html, body {
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   background-color: var(--bg-color);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -34,18 +41,17 @@ html, body {
   overflow: hidden;
 }
 
-/* Канвас с падающими колбочками на фоне */
+/* Слой физики */
 .physics-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 1;
   pointer-events: none;
 }
 
-/* Главный интерфейс поверх физики */
+/* UI-интерфейс */
 .screen-container {
   position: relative;
   z-index: 2;
@@ -55,19 +61,19 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 28px;
-  pointer-events: none; /* Пропускает клики насквозь */
+  padding: 0 24px;
+  pointer-events: none;
 }
 
-/* Блок с текстами */
+/* Текстовый блок */
 .text-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 12px;
-  margin-bottom: 34px;
-  max-width: 340px;
+  margin-bottom: 36px;
+  max-width: 330px;
 }
 
 .hero-title {
@@ -78,21 +84,20 @@ html, body {
   color: var(--text-primary);
 }
 
-/* Описание стало крупнее и контрастнее */
 .hero-subtitle {
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: -0.015em;
   color: var(--text-secondary);
 }
 
-/* iOS Glass кнопка */
+/* Кнопка с мягким контуром и стеклом */
 .ios-glass-btn {
-  pointer-events: auto; /* Включаем кликабельность кнопки */
+  pointer-events: auto;
   width: 100%;
-  max-width: 320px;
-  padding: 17px 28px;
+  max-width: 310px;
+  padding: 17px 24px;
   
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
@@ -103,13 +108,13 @@ html, body {
   
   color: #ffffff;
   font-family: inherit;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   
   cursor: pointer;
   outline: none;
-  box-shadow: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
               background-color 0.15s ease,
@@ -119,5 +124,5 @@ html, body {
 .ios-glass-btn:active {
   transform: scale(0.96);
   background: var(--glass-active);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.18);
 }
