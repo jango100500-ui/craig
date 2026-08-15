@@ -81,7 +81,7 @@ html, body {
 }
 
 .ios-skeleton-box.game-mock {
-  border-radius: 24px;
+  border-radius: 22px;
 }
 
 @keyframes smoothColorFade {
@@ -142,7 +142,7 @@ html, body {
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
-  padding: 16px 24px;
+  padding: 15px 24px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -167,15 +167,13 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Заблокированная кнопка при обратном отсчете */
 .ios-glass-btn.locked {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: 0.6;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
 }
 
-/* Особая кнопка при угадывании */
 .ios-glass-btn.win-btn {
   background: rgba(48, 209, 88, 0.2);
   border-color: rgba(48, 209, 88, 0.4);
@@ -292,12 +290,12 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   max-width: 360px;
   height: 100%;
-  max-height: 640px;
-  padding: 32px 20px 24px;
+  max-height: 560px; /* Уменьшили высоту для собранного вида */
+  padding: 16px 20px;
 }
 
 .game-active-view {
@@ -313,14 +311,14 @@ html, body {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 8px 4px;
+  gap: 16px;
+  padding: 4px;
 }
 
 .game-lottie-slot {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 84px;
+  height: 84px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -333,46 +331,57 @@ html, body {
   gap: 6px;
   text-align: left;
   flex-grow: 1;
+  min-height: 76px;
+  justify-content: center;
 }
 
-/* Слайдер номера вопроса */
+/* Моковые полоски загрузки текста */
+.question-skeleton-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.text-skeleton-line {
+  height: 14px;
+  border-radius: 99px;
+  background-color: rgba(255, 255, 255, 0.04);
+  animation: smoothColorFade 1.2s ease-in-out infinite alternate;
+}
+
+.text-skeleton-line.short { width: 45%; height: 12px; }
+.text-skeleton-line.full { width: 95%; }
+.text-skeleton-line.medium { width: 70%; }
+
 .question-number-slider {
   overflow: hidden;
-  height: 28px;
+  height: 24px;
   display: flex;
   align-items: center;
 }
 
 .game-question-badge {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.12rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.55);
   display: inline-block;
 }
 
-/* Мармеладный слайд номера: сверху вниз */
 .jelly-slide-in {
   animation: slideNumIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes slideNumIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-24px) scale(0.85);
-  }
-  60% {
-    transform: translateY(4px) scale(1.15, 0.85);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  0% { opacity: 0; transform: translateY(-20px) scale(0.85); }
+  60% { transform: translateY(4px) scale(1.15, 0.85); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .game-question-text {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.02em;
@@ -387,10 +396,10 @@ html, body {
   animation: jellyPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Пустое аккуратное пространство */
-.game-spacer {
-  flex-grow: 1;
-  min-height: 24px;
+/* Компактный отступ между вопросом и кнопками */
+.game-compact-spacer {
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .game-buttons-group {
@@ -398,11 +407,11 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* ===================================================
-   ЭКРАН МЫШЛЕНИЯ КРЕГГА (THINKING SCREEN)
+   ЭКРАН РАЗДУМИЙ ИИ
    =================================================== */
 
 .thinking-screen-view {
@@ -412,20 +421,20 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 18px;
   animation: fadeIn 0.25s ease-out;
 }
 
 .thinking-lottie-slot {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .thinking-text-animated {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.85);
