@@ -27,7 +27,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // Старт первого реального вопроса
+  // Первый вопрос от Крегга
   const startInitialQuestion = async () => {
     setIsThinking(true);
     setErrorMessage(null);
@@ -57,7 +57,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     startInitialQuestion();
   }, []);
 
-  // Таймер обратного отсчета (5.0s)
+  // Таймер защиты от мисклика
   useEffect(() => {
     if (!currentAI) return;
     setIsLocked(true);
@@ -77,7 +77,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // Ответ игрока на вопрос ИИ
+  // Ответ игрока
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
@@ -125,11 +125,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
   return (
     <main className="game-screen-container">
-      {/* Экран ошибки API */}
       {errorMessage ? (
         <div className="game-error-view">
           <div className="game-error-icon">⚠️</div>
-          <h2 className="game-error-title">Ошибка Gemini API</h2>
+          <h2 className="game-error-title">Сбой запроса</h2>
           <p className="game-error-text">{errorMessage}</p>
           <button 
             type="button" 
@@ -140,7 +139,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </button>
         </div>
       ) : isThinking ? (
-        /* Экран раздумий ИИ */
+        /* Экран раздумий с правильными пробелами */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -151,9 +150,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </div>
 
           <div className="thinking-text-animated">
-            {thinkingPhrase.split('').map((char, i) => (
-              <span key={i} className="jelly-char" style={{ animationDelay: `${i * 30}ms` }}>
-                {char}
+            {thinkingPhrase.split(' ').map((word, wIdx) => (
+              <span key={wIdx} className="thinking-word">
+                {word.split('').map((char, cIdx) => (
+                  <span 
+                    key={cIdx} 
+                    className="jelly-char" 
+                    style={{ animationDelay: `${(wIdx * 120) + (cIdx * 35)}ms` }}
+                  >
+                    {char}
+                  </span>
+                ))}
+                &nbsp;
               </span>
             ))}
           </div>
@@ -203,7 +211,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
           <div className="game-compact-spacer" />
 
-          {/* Кнопки ответов */}
           <div className="game-buttons-group">
             {isGuessMode ? (
               <>
