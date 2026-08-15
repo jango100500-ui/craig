@@ -3,15 +3,13 @@ import { PhysicsPills } from './components/PhysicsPills';
 
 export const App: React.FC = () => {
   const handleStart = () => {
-    console.log('Игрок нажал "Я загадал!"');
+    console.log('Игрок загадал персонажа!');
   };
 
   return (
     <>
-      {/* Слой с физикой падающих колбочек */}
       <PhysicsPills />
 
-      {/* Интерфейс приложения поверх физики */}
       <main className="screen-container">
         <div className="text-group">
           <h1 className="hero-title">
