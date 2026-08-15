@@ -52,7 +52,7 @@ html, body {
   text-align: center;
 }
 
-/* Слот под анимацию */
+/* Слот под Lottie / Скелетон */
 .animation-slot {
   position: relative;
   width: 136px;
@@ -63,28 +63,20 @@ html, body {
   justify-content: center;
 }
 
-/* Мок-квадрат: без контура, без свечений, плавный переход цвета */
 .ios-skeleton-box {
   width: 100%;
   height: 100%;
   border-radius: 30px;
   border: none;
-  outline: none;
-  box-shadow: none;
   background-color: rgba(255, 255, 255, 0.03);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
 @keyframes smoothColorFade {
-  0% {
-    background-color: rgba(255, 255, 255, 0.03);
-  }
-  100% {
-    background-color: rgba(255, 255, 255, 0.09);
-  }
+  0% { background-color: rgba(255, 255, 255, 0.03); }
+  100% { background-color: rgba(255, 255, 255, 0.09); }
 }
 
-/* Lottie плеер */
 .lottie-player {
   width: 100%;
   height: 100%;
@@ -135,7 +127,7 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* iOS Glass кнопка */
+/* iOS Кнопка */
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
@@ -164,6 +156,106 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* ===================================================
+   ЭКРАН ЗАГРУЗКИ (LOADING SCREEN)
+   =================================================== */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #000000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: screenFadeToBlack 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes screenFadeToBlack {
+  from {
+    opacity: 0;
+    background-color: var(--bg-color);
+  }
+  to {
+    opacity: 1;
+    background-color: #000000;
+  }
+}
+
+/* Контейнер иконки по центру */
+.loading-icon-wrapper {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: iconFadeIn 0.4s ease-out 0.15s backwards;
+}
+
+@keyframes iconFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Делает PNG иконку чисто белой */
+  filter: brightness(0) invert(1);
+}
+
+/* Базовая иконка с прозрачностью 0.2 */
+.loading-icon.base {
+  opacity: 0.2;
+}
+
+/* Слой заполнения сверху вниз с прозрачностью 0.3 */
+.loading-icon.fill {
+  opacity: 0.3;
+  clip-path: inset(100% 0 0 0);
+  animation: fillIconTopToBottom 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+@keyframes fillIconTopToBottom {
+  0% {
+    clip-path: inset(0 0 100% 0); /* скрыто снизу */
+  }
+  100% {
+    clip-path: inset(0 0 0% 0);   /* полностью открыто */
+  }
+}
+
+/* Нижний блок текста загрузки */
+.loading-status {
+  position: absolute;
+  bottom: calc(48px + env(safe-area-inset-bottom));
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-dots {
+  display: inline-block;
+  min-width: 18px;
+  text-align: left;
+}
+
 /* Заглушка ориентации */
 .landscape-lock-overlay {
   display: none;
@@ -184,12 +276,6 @@ html, body {
     gap: 10px;
   }
 
-  .landscape-lock-overlay h2 {
-    font-size: 1.2rem;
-  }
-
-  .landscape-lock-overlay p {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-  }
+  .landscape-lock-overlay h2 { font-size: 1.2rem; }
+  .landscape-lock-overlay p { font-size: 0.95rem; color: var(--text-secondary); }
 }
