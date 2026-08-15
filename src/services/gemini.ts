@@ -10,7 +10,8 @@ export interface ChatMessage {
   parts: [{ text: string }];
 }
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+// Безопасное чтение переменной окружения
+const GEMINI_API_KEY = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY || '';
 const MODEL_NAME = 'gemini-2.5-flash';
 
 let systemPromptCache = '';
@@ -63,7 +64,6 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
     throw new Error('Пустой ответ от Gemini');
   }
 
-  // Очистка от возможных markdown-тегов
   const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
   return JSON.parse(cleanJson) as AIResponse;
 }
