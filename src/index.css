@@ -52,7 +52,7 @@ html, body {
   text-align: center;
 }
 
-/* Слот под анимацию/скелетон */
+/* Слот под анимацию */
 .animation-slot {
   position: relative;
   width: 136px;
@@ -63,34 +63,24 @@ html, body {
   justify-content: center;
 }
 
-/* iOS Skeleton — скругленный матовый квадрат со скользящим бликом */
+/* Мок-квадрат: без контура, без свечений, плавный переход цвета */
 .ios-skeleton-box {
   width: 100%;
   height: 100%;
-  border-radius: 30px; /* Скругление в стиле иконок / виджетов iOS */
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  overflow: hidden;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: rgba(255, 255, 255, 0.03);
+  animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
-.ios-skeleton-box::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.06) 50%,
-    transparent 100%
-  );
-  animation: skeletonShimmer 1.8s infinite ease-in-out;
-}
-
-@keyframes skeletonShimmer {
+@keyframes smoothColorFade {
+  0% {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
   100% {
-    transform: translateX(100%);
+    background-color: rgba(255, 255, 255, 0.09);
   }
 }
 
@@ -110,7 +100,7 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
@@ -119,7 +109,7 @@ html, body {
   height: 100% !important;
 }
 
-/* Текстовый блок */
+/* Текстовая группа */
 .text-group {
   display: flex;
   flex-direction: column;
@@ -150,24 +140,19 @@ html, body {
   width: 100%;
   max-width: 320px;
   padding: 17px 24px;
-  
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
-  
   border: 1px solid var(--glass-border);
   border-radius: 9999px;
-  
   color: #ffffff;
   font-family: inherit;
   font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.015em;
-  
   cursor: pointer;
   outline: none;
   box-shadow: none;
-  
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
               background-color 0.15s ease,
               border-color 0.15s ease;
@@ -179,7 +164,7 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Заглушка для горизонтального режима */
+/* Заглушка ориентации */
 .landscape-lock-overlay {
   display: none;
 }
