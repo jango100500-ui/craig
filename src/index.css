@@ -52,17 +52,49 @@ html, body {
   text-align: center;
 }
 
-/* Контейнер аватара */
-.lottie-wrapper {
+/* Слот под анимацию/скелетон */
+.animation-slot {
   position: relative;
-  width: 130px;
-  height: 130px;
+  width: 136px;
+  height: 136px;
   margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* iOS Skeleton — скругленный матовый квадрат со скользящим бликом */
+.ios-skeleton-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 30px; /* Скругление в стиле иконок / виджетов iOS */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.ios-skeleton-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: skeletonShimmer 1.8s infinite ease-in-out;
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Lottie плеер */
 .lottie-player {
   width: 100%;
   height: 100%;
@@ -74,6 +106,12 @@ html, body {
 
 .lottie-player.visible {
   display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .lottie-player svg {
@@ -81,67 +119,7 @@ html, body {
   height: 100% !important;
 }
 
-/* Моковый Glass Orb на случай отсутствия Lottie/интернета */
-.mock-orb {
-  position: relative;
-  width: 90px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mock-orb-core {
-  position: absolute;
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25), rgba(90, 140, 255, 0.2) 40%, rgba(30, 32, 45, 0.8) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  animation: orbBreathe 4s ease-in-out infinite alternate;
-}
-
-.mock-orb-ring {
-  position: absolute;
-  width: 104px;
-  height: 104px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  animation: orbRotate 12s linear infinite;
-}
-
-.mock-orb-sparkle {
-  position: relative;
-  z-index: 2;
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  animation: sparklePulse 3s ease-in-out infinite;
-}
-
-@keyframes orbBreathe {
-  0% {
-    transform: scale(0.96);
-    box-shadow: 0 0 20px rgba(90, 140, 255, 0.15);
-  }
-  100% {
-    transform: scale(1.04);
-    box-shadow: 0 0 35px rgba(90, 140, 255, 0.3);
-  }
-}
-
-@keyframes orbRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes sparklePulse {
-  0%, 100% { opacity: 0.6; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-
-/* Текстовая группа */
+/* Текстовый блок */
 .text-group {
   display: flex;
   flex-direction: column;
@@ -167,7 +145,7 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* Кнопка */
+/* iOS Glass кнопка */
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
@@ -201,7 +179,7 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Заглушка ориентации */
+/* Заглушка для горизонтального режима */
 .landscape-lock-overlay {
   display: none;
 }
