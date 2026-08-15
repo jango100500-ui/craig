@@ -10,17 +10,6 @@ const THINKING_PHRASES = [
   'Отсекаю лишних кандидатов…'
 ];
 
-// Умные резервные вопросы бинарного поиска (если нет связи с API)
-const FALLBACK_QUESTIONS = [
-  'Твой персонаж существует в реальном мире?',
-  'Этот персонаж мужского пола?',
-  'Он связан с кинематографом или сериалами?',
-  'Обладает ли он сверхчеловеческими способностями?',
-  'Этот персонаж является главным героем своей истории?',
-  'Он носит маску, шлем или плащ?',
-  'Ты загадал Бэтмена (Брюса Уэйна)?'
-];
-
 interface GameScreenProps {
   onRestart: () => void;
 }
@@ -28,7 +17,7 @@ interface GameScreenProps {
 export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [currentAI, setCurrentAI] = useState<AIResponse | null>(null);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
@@ -38,44 +27,37 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // 1. Первый вопрос от Крегга
-  useEffect(() => {
-    const startInitialQuestion = async () => {
-      setIsInitialLoading(true);
-      const initialUserMsg: ChatMessage = {
-        role: 'user',
-        parts: [{ text: 'Я загадал персонажа. Начни игру и задай первый фундаментальный вопрос.' }]
-      };
+  // Старт первого реального вопроса
+  const startInitialQuestion = async () => {
+    setIsThinking(true);
+    setErrorMessage(null);
+    setThinkingPhrase('Крегг подключается к разуму…');
 
-      try {
-        const firstAI = await askCraig([initialUserMsg]);
-        setCurrentAI(firstAI);
-        setHistory([
-          initialUserMsg,
-          { role: 'model', parts: [{ text: JSON.stringify(firstAI) }] }
-        ]);
-      } catch (err) {
-        console.warn('Использован стартовый вопрос:', err);
-        const fallbackAI: AIResponse = {
-          reflection: 'Стартовый бинарный вопрос',
-          qunumber: 1,
-          answer: FALLBACK_QUESTIONS[0],
-          character: null
-        };
-        setCurrentAI(fallbackAI);
-        setHistory([
-          initialUserMsg,
-          { role: 'model', parts: [{ text: JSON.stringify(fallbackAI) }] }
-        ]);
-      } finally {
-        setIsInitialLoading(false);
-      }
+    const initialUserMsg: ChatMessage = {
+      role: 'user',
+      parts: [{ text: 'Я загадал персонажа. Начни игру и задай первый фундаментальный вопрос.' }]
     };
 
+    try {
+      const firstAI = await askCraig([initialUserMsg]);
+      setCurrentAI(firstAI);
+      setHistory([
+        initialUserMsg,
+        { role: 'model', parts: [{ text: JSON.stringify(firstAI) }] }
+      ]);
+    } catch (err: any) {
+      console.error('[Craig Error]', err);
+      setErrorMessage(err.message || 'Ошибка подключения к ИИ');
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
+  useEffect(() => {
     startInitialQuestion();
   }, []);
 
-  // 2. Таймер защиты от мисклика на каждый новый вопрос
+  // Таймер обратного отсчета (5.0s)
   useEffect(() => {
     if (!currentAI) return;
     setIsLocked(true);
@@ -95,7 +77,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // 3. Отправка ответа игрока
+  // Ответ игрока на вопрос ИИ
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
@@ -108,6 +90,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     const randomPhrase = THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)];
     setThinkingPhrase(randomPhrase);
     setIsThinking(true);
+    setErrorMessage(null);
 
     const nextQNum = (currentAI.qunumber || 1) + 1;
     const userReplyMsg: ChatMessage = {
@@ -120,7 +103,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     try {
       const nextAI = await askCraig(updatedHistory);
       
-      // Страховка от сбоя счетчика
       if (nextAI.qunumber <= currentAI.qunumber) {
         nextAI.qunumber = nextQNum;
       }
@@ -131,26 +113,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         ...updatedHistory,
         { role: 'model', parts: [{ text: JSON.stringify(nextAI) }] }
       ]);
-    } catch (err) {
-      console.warn('[Craig] Ошибка API, активирован резервный вопрос:', err);
-      
-      // Динамический переход к следующему вопросу из цепочки
-      const fallbackIdx = Math.min(nextQNum - 1, FALLBACK_QUESTIONS.length - 1);
-      const isFinalFallback = fallbackIdx === FALLBACK_QUESTIONS.length - 1;
-
-      const fallbackNext: AIResponse = {
-        reflection: 'Резервная цепочка бинарного поиска',
-        qunumber: nextQNum,
-        answer: FALLBACK_QUESTIONS[fallbackIdx],
-        character: isFinalFallback ? 'Бэтмен (Брюс Уэйн)' : null
-      };
-
-      setNumberAnimKey((k) => k + 1);
-      setCurrentAI(fallbackNext);
-      setHistory([
-        ...updatedHistory,
-        { role: 'model', parts: [{ text: JSON.stringify(fallbackNext) }] }
-      ]);
+    } catch (err: any) {
+      console.error('[Craig Error]', err);
+      setErrorMessage(err.message || 'Ошибка генерации ответа');
     } finally {
       setIsThinking(false);
     }
@@ -160,8 +125,22 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
   return (
     <main className="game-screen-container">
-      {/* 1. ЭКРАН РАЗДУМИЙ КРЕГГА */}
-      {isThinking ? (
+      {/* Экран ошибки API */}
+      {errorMessage ? (
+        <div className="game-error-view">
+          <div className="game-error-icon">⚠️</div>
+          <h2 className="game-error-title">Ошибка Gemini API</h2>
+          <p className="game-error-text">{errorMessage}</p>
+          <button 
+            type="button" 
+            className="ios-glass-btn"
+            onClick={startInitialQuestion}
+          >
+            Повторить запрос
+          </button>
+        </div>
+      ) : isThinking ? (
+        /* Экран раздумий ИИ */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -180,10 +159,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </div>
         </div>
       ) : (
-        /* 2. ЭКРАН ВОПРОСА */
+        /* Экран вопроса */
         <div className="game-active-view">
           <div className="game-header-area">
-            {/* Анимация Write.json */}
             <div className="game-lottie-slot">
               <LottieIcon 
                 src="/Write.json" 
@@ -192,9 +170,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
               />
             </div>
 
-            {/* Текст вопроса и номер */}
             <div className="game-question-block">
-              {isInitialLoading || !currentAI ? (
+              {!currentAI ? (
                 <div className="question-skeleton-group">
                   <div className="text-skeleton-line short" />
                   <div className="text-skeleton-line full" />
@@ -232,18 +209,18 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
               <>
                 <button 
                   type="button" 
-                  className={`ios-glass-btn win-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn win-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Да, угадал!')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Да, угадал!'}
                 </button>
 
                 <button 
                   type="button" 
-                  className={`ios-glass-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Нет, продолжить')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Нет, продолжить'}
                 </button>
@@ -252,36 +229,36 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
               <>
                 <button 
                   type="button" 
-                  className={`ios-glass-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Да')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Да'}
                 </button>
 
                 <button 
                   type="button" 
-                  className={`ios-glass-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Нет')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Нет'}
                 </button>
 
                 <button 
                   type="button" 
-                  className={`ios-glass-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Частично')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Частично'}
                 </button>
 
                 <button 
                   type="button" 
-                  className={`ios-glass-btn ${isLocked || isInitialLoading ? 'locked' : ''}`}
+                  className={`ios-glass-btn ${isLocked ? 'locked' : ''}`}
                   onClick={() => handleUserAnswer('Я не знаю')}
-                  disabled={isLocked || isInitialLoading}
+                  disabled={isLocked}
                 >
                   {isLocked ? `${countdown.toFixed(1)}` : 'Я не знаю'}
                 </button>
