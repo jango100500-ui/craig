@@ -490,3 +490,34 @@ html, body {
   width: 110px;
   height: 110px;
 }
+/* Экран реальной ошибки */
+.game-error-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  gap: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.game-error-icon {
+  font-size: 2.5rem;
+}
+
+.game-error-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ff453a;
+}
+
+.game-error-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 300px;
+  word-break: break-word;
+}
