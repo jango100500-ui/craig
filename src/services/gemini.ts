@@ -16,21 +16,18 @@ export interface ModelOption {
   tag?: string;
 }
 
+// Только официально поддерживаемые и активные модели Google
 export const AVAILABLE_MODELS: ModelOption[] = [
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', tag: 'Рекомендуемая' },
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash' },
-  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', tag: 'Новинка' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tag: 'Умная' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tag: 'Легкая' },
-  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' }
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tag: 'Рекомендуемая' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tag: 'Максимальный ум' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tag: 'Ультра-быстрая' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tag: 'Новое поколение' }
 ];
 
 const STORAGE_KEY = 'craig_selected_model';
 
 export function getSelectedModelId(): string {
-  return localStorage.getItem(STORAGE_KEY) || 'gemini-3.6-flash';
+  return localStorage.getItem(STORAGE_KEY) || 'gemini-2.5-flash';
 }
 
 export function setSelectedModelId(modelId: string): void {
@@ -52,7 +49,7 @@ async function getSystemPrompt(): Promise<string> {
       return await res.text();
     }
   } catch (e) {
-    console.warn('[Craig] Используется встроенный системный промпт');
+    console.warn('[Craig] Загружен резервный системный промпт');
   }
   return `Ты — Крегг, ИИ-Акинатор. Твоя цель — угадать загаданного персонажа бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
 }
@@ -74,7 +71,6 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
   const systemPrompt = await getSystemPrompt();
 
   const userChosen = getSelectedModelId();
-  // Формируем список моделей: выбранная пользователем — первая, затем остальные как резерв
   const modelsToTry = [
     userChosen,
     ...AVAILABLE_MODELS.map(m => m.id).filter(id => id !== userChosen)
@@ -107,7 +103,7 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
       if (!response.ok) {
         const errDetails = await response.text();
         lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
-        console.warn(`[Craig AI] Модель ${model} недоступна (${response.status}), пробуем резервную...`);
+        console.warn(`[Craig AI] Модель ${model} недоступна (${response.status}), переключаемся...`);
         continue;
       }
 
@@ -126,5 +122,5 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
     }
   }
 
-  throw new Error(lastErrorMsg || 'Все доступные модели Gemini временно перегружены');
+  throw new Error(lastErrorMsg || 'Все доступные модели Gemini временно недоступны');
 }
