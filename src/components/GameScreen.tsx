@@ -37,7 +37,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [isLocked, setIsLocked] = useState<boolean>(true);
 
   // Для мармеладного перехода номера вопроса
-  const [prevQNumber, setPrevQNumber] = useState<number>(1);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
   // 1. Инициализация Lottie Write.json
@@ -61,7 +60,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => anim?.destroy();
   }, []);
 
-  // 2. Инициализация Lottie Thinking.json при переходе в режим раздумий
+  // 2. Инициализация Lottie Thinking.json
   useEffect(() => {
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
     if (isThinking) {
@@ -83,7 +82,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => anim?.destroy();
   }, [isThinking]);
 
-  // 3. Первый вопрос от Крегга при старте игры
+  // 3. Первый вопрос от Крегга
   useEffect(() => {
     const startInitialQuestion = async () => {
       setIsThinking(true);
@@ -101,7 +100,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         ]);
       } catch (err) {
         console.error('Ошибка старта игры:', err);
-        // Резервный вопрос
         setCurrentAI({
           reflection: 'Стартовый вопрос',
           qunumber: 1,
@@ -116,7 +114,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     startInitialQuestion();
   }, []);
 
-  // 4. Таймер защиты от мисклика (5.0s) на каждый новый вопрос
+  // 4. Таймер защиты от мисклика (5.0s)
   useEffect(() => {
     setIsLocked(true);
     setCountdown(5.0);
@@ -135,7 +133,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI.qunumber, currentAI.answer]);
 
-  // 5. Обработка ответа игрока
+  // 5. Обработка ответа
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking) return;
 
@@ -145,7 +143,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
       return;
     }
 
-    // Случайная фраза мышления
     const randomPhrase = THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)];
     setThinkingPhrase(randomPhrase);
     setIsThinking(true);
@@ -158,7 +155,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     try {
       const nextAI = await askCraig(newHistory);
       
-      setPrevQNumber(currentAI.qunumber);
       setNumberAnimKey((k) => k + 1);
       setCurrentAI(nextAI);
       
@@ -177,7 +173,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
   return (
     <main className="game-screen-container">
-      {/* 1. РЕЖИМ МЫШЛЕНИЯ КРЕГГА */}
       {isThinking ? (
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
@@ -197,7 +192,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </div>
         </div>
       ) : (
-        /* 2. РЕЖИМ ВОПРОСА / ДОГАДКИ */
         <div className="game-active-view">
           <div className="game-header-area">
             <div className="game-lottie-slot">
@@ -209,14 +203,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
             </div>
 
             <div className="game-question-block">
-              {/* Мармеладный переход номера вопроса */}
               <div className="question-number-slider">
                 <span key={numberAnimKey} className="game-question-badge jelly-slide-in">
                   {isGuessMode ? 'Финальная догадка' : `Вопрос ${currentAI.qunumber}`}
                 </span>
               </div>
 
-              {/* Появление текста вопроса */}
               <p key={currentAI.answer} className="game-question-text">
                 {currentAI.answer.split(' ').map((word, wIdx) => (
                   <span 
@@ -231,10 +223,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
             </div>
           </div>
 
-          {/* Чистое пустое пространство */}
           <div className="game-spacer" />
 
-          {/* Кнопки ответов с защитой от мисклика */}
           <div className="game-buttons-group">
             {isGuessMode ? (
               <>
