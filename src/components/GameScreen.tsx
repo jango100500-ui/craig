@@ -10,6 +10,17 @@ const THINKING_PHRASES = [
   'Отсекаю лишних кандидатов…'
 ];
 
+// Умные резервные вопросы бинарного поиска (если нет связи с API)
+const FALLBACK_QUESTIONS = [
+  'Твой персонаж существует в реальном мире?',
+  'Этот персонаж мужского пола?',
+  'Он связан с кинематографом или сериалами?',
+  'Обладает ли он сверхчеловеческими способностями?',
+  'Этот персонаж является главным героем своей истории?',
+  'Он носит маску, шлем или плащ?',
+  'Ты загадал Бэтмена (Брюса Уэйна)?'
+];
+
 interface GameScreenProps {
   onRestart: () => void;
 }
@@ -22,12 +33,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
 
-  // Защита от мисклика (5 секунд)
+  // Защита от мисклика (5.0s)
   const [countdown, setCountdown] = useState<number>(5.0);
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // 1. Первый фундаментальный вопрос от Крегга
+  // 1. Первый вопрос от Крегга
   useEffect(() => {
     const startInitialQuestion = async () => {
       setIsInitialLoading(true);
@@ -44,11 +55,11 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           { role: 'model', parts: [{ text: JSON.stringify(firstAI) }] }
         ]);
       } catch (err) {
-        console.error('Ошибка старта игры:', err);
+        console.warn('Использован стартовый вопрос:', err);
         const fallbackAI: AIResponse = {
-          reflection: 'Резервный старт',
+          reflection: 'Стартовый бинарный вопрос',
           qunumber: 1,
-          answer: 'Твой персонаж существует в реальном мире?',
+          answer: FALLBACK_QUESTIONS[0],
           character: null
         };
         setCurrentAI(fallbackAI);
@@ -64,7 +75,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     startInitialQuestion();
   }, []);
 
-  // 2. Таймер блокировки (5.0s) на каждый вопрос
+  // 2. Таймер защиты от мисклика на каждый новый вопрос
   useEffect(() => {
     if (!currentAI) return;
     setIsLocked(true);
@@ -98,15 +109,22 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     setThinkingPhrase(randomPhrase);
     setIsThinking(true);
 
+    const nextQNum = (currentAI.qunumber || 1) + 1;
     const userReplyMsg: ChatMessage = {
       role: 'user',
-      parts: [{ text: `Ответ игрока на вопрос ${currentAI.qunumber}: "${answerText}"` }]
+      parts: [{ text: `Ответ игрока на вопрос ${currentAI.qunumber} ("${currentAI.answer}"): "${answerText}". Задай следующий вопрос ${nextQNum}.` }]
     };
 
     const updatedHistory: ChatMessage[] = [...history, userReplyMsg];
 
     try {
       const nextAI = await askCraig(updatedHistory);
+      
+      // Страховка от сбоя счетчика
+      if (nextAI.qunumber <= currentAI.qunumber) {
+        nextAI.qunumber = nextQNum;
+      }
+
       setNumberAnimKey((k) => k + 1);
       setCurrentAI(nextAI);
       setHistory([
@@ -114,14 +132,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         { role: 'model', parts: [{ text: JSON.stringify(nextAI) }] }
       ]);
     } catch (err) {
-      console.error('Ошибка получения ответа от ИИ:', err);
-      // Если запрос сорвался — мягко повторяем с резервным шагом
+      console.warn('[Craig] Ошибка API, активирован резервный вопрос:', err);
+      
+      // Динамический переход к следующему вопросу из цепочки
+      const fallbackIdx = Math.min(nextQNum - 1, FALLBACK_QUESTIONS.length - 1);
+      const isFinalFallback = fallbackIdx === FALLBACK_QUESTIONS.length - 1;
+
       const fallbackNext: AIResponse = {
-        reflection: 'Резервный шаг',
-        qunumber: (currentAI.qunumber || 1) + 1,
-        answer: 'Этот персонаж мужского пола?',
-        character: null
+        reflection: 'Резервная цепочка бинарного поиска',
+        qunumber: nextQNum,
+        answer: FALLBACK_QUESTIONS[fallbackIdx],
+        character: isFinalFallback ? 'Бэтмен (Брюс Уэйн)' : null
       };
+
       setNumberAnimKey((k) => k + 1);
       setCurrentAI(fallbackNext);
       setHistory([
@@ -160,7 +183,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         /* 2. ЭКРАН ВОПРОСА */
         <div className="game-active-view">
           <div className="game-header-area">
-            {/* Анимация Write.json — теперь никогда не исчезает */}
+            {/* Анимация Write.json */}
             <div className="game-lottie-slot">
               <LottieIcon 
                 src="/Write.json" 
@@ -203,7 +226,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
 
           <div className="game-compact-spacer" />
 
-          {/* 4 кнопки ответов (или 2 при угадывании) */}
+          {/* Кнопки ответов */}
           <div className="game-buttons-group">
             {isGuessMode ? (
               <>
