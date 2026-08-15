@@ -1,9 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import lottie from 'lottie-web';
+import { LoadingScreen } from './components/LoadingScreen';
+
+const BUTTON_OPTIONS = [
+  'Я загадал!',
+  'Начнем игру!',
+  'Загадал!',
+  'Поехали!'
+];
 
 export const App: React.FC = () => {
   const lottieContainer = useRef<HTMLDivElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState<'home' | 'loading'>('home');
+
+  // Выбираем случайную надпись для кнопки при старте
+  const [buttonText] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * BUTTON_OPTIONS.length);
+    return BUTTON_OPTIONS[randomIndex];
+  });
 
   useEffect(() => {
     if (window.screen?.orientation && 'lock' in window.screen.orientation) {
@@ -13,7 +28,6 @@ export const App: React.FC = () => {
 
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
 
-    // Загрузка Hi.json (с заглавной буквы)
     fetch(`/Hi.json?t=${Date.now()}`)
       .then((res) => {
         if (!res.ok) throw new Error('Файл Hi.json не найден');
@@ -42,7 +56,8 @@ export const App: React.FC = () => {
   }, []);
 
   const handleStart = () => {
-    console.log('Игрок нажал "Я загадал!"');
+    // Переход на экран загрузки
+    setCurrentScreen('loading');
   };
 
   return (
@@ -52,35 +67,36 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      <main className="screen-container">
-        <div className="animation-slot">
-          {/* Чистый пульсирующий мок-квадрат */}
-          {!isLoaded && <div className="ios-skeleton-box" />}
+      {currentScreen === 'loading' ? (
+        <LoadingScreen />
+      ) : (
+        <main className="screen-container">
+          <div className="animation-slot">
+            {!isLoaded && <div className="ios-skeleton-box" />}
+            <div 
+              ref={lottieContainer} 
+              className={`lottie-player ${isLoaded ? 'visible' : 'hidden'}`} 
+            />
+          </div>
 
-          {/* Lottie анимация */}
-          <div 
-            ref={lottieContainer} 
-            className={`lottie-player ${isLoaded ? 'visible' : 'hidden'}`} 
-          />
-        </div>
+          <div className="text-group">
+            <h1 className="hero-title">
+              Загадай любого персонажа
+            </h1>
+            <p className="hero-subtitle">
+              Это может быть реальный человек, герой фильма, сериала, игры или аниме. Я задам несколько вопросов и попробую угадать, кого ты задумал
+            </p>
+          </div>
 
-        <div className="text-group">
-          <h1 className="hero-title">
-            Загадай любого персонажа
-          </h1>
-          <p className="hero-subtitle">
-            Это может быть реальный человек, герой фильма, сериала, игры или аниме. Я задам несколько вопросов и попробую угадать, кого ты задумал
-          </p>
-        </div>
-
-        <button 
-          type="button" 
-          className="ios-glass-btn"
-          onClick={handleStart}
-        >
-          Я загадал!
-        </button>
-      </main>
+          <button 
+            type="button" 
+            className="ios-glass-btn"
+            onClick={handleStart}
+          >
+            {buttonText}
+          </button>
+        </main>
+      )}
     </>
   );
 };
