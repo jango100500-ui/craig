@@ -29,10 +29,7 @@ export const App: React.FC = () => {
     let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
 
     fetch(`/Hi.json?t=${Date.now()}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Файл Hi.json не найден');
-        return res.json();
-      })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((animationData) => {
         if (!lottieContainer.current) return;
 
@@ -50,9 +47,7 @@ export const App: React.FC = () => {
         setIsLoaded(false);
       });
 
-    return () => {
-      anim?.destroy();
-    };
+    return () => anim?.destroy();
   }, []);
 
   return (
@@ -62,17 +57,14 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      {/* Оверлей загрузки с плавным растворением */}
       {currentScreen === 'loading' && (
         <LoadingScreen onComplete={() => setCurrentScreen('game')} />
       )}
 
-      {/* Экран игры */}
       {currentScreen === 'game' && (
-        <GameScreen />
+        <GameScreen onRestart={() => setCurrentScreen('home')} />
       )}
 
-      {/* Главный экран */}
       {currentScreen === 'home' && (
         <main className="screen-container">
           <div className="animation-slot">
