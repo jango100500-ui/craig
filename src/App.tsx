@@ -1,29 +1,36 @@
 import React from 'react';
+import { PhysicsPills } from './components/PhysicsPills';
 
 export const App: React.FC = () => {
   const handleStart = () => {
-    console.log('Игрок загадал персонажа!');
+    console.log('Игрок нажал "Я загадал!"');
   };
 
   return (
-    <main className="screen-container">
-      <div className="text-group">
-        <h1 className="hero-title">
-          Загадай любого персонажа
-        </h1>
-        <p className="hero-subtitle">
-          Я попробую угадать его, кем бы он ни был
-        </p>
-      </div>
+    <>
+      {/* Слой с физикой падающих колбочек */}
+      <PhysicsPills />
 
-      <button 
-        type="button" 
-        className="ios-glass-btn"
-        onClick={handleStart}
-      >
-        Я загадал!
-      </button>
-    </main>
+      {/* Интерфейс приложения поверх физики */}
+      <main className="screen-container">
+        <div className="text-group">
+          <h1 className="hero-title">
+            Загадай любого персонажа
+          </h1>
+          <p className="hero-subtitle">
+            Я попробую угадать его, кем бы он ни был
+          </p>
+        </div>
+
+        <button 
+          type="button" 
+          className="ios-glass-btn"
+          onClick={handleStart}
+        >
+          Я загадал!
+        </button>
+      </main>
+    </>
   );
 };
 
