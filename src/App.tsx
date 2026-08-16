@@ -112,7 +112,8 @@ export const App: React.FC = () => {
             onClick={() => setIsSettingsOpen(true)}
             aria-label="Настройки"
           >
-            <img src="/settings.png" alt="Настройки" className="settings-icon-img" />
+            {/* Имя файла с заглавной буквы */}
+            <img src="/Settings.png" alt="Настройки" className="settings-icon-img" />
           </button>
 
           <main className="screen-container">
