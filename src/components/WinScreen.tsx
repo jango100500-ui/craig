@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LottieIcon } from './LottieIcon';
+import { SmartIcon } from './SmartIcon';
 
 const WIN_PHRASES = [
   'Я как всегда хорош!',
@@ -21,7 +22,6 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
     return WIN_PHRASES[Math.floor(Math.random() * WIN_PHRASES.length)];
   });
 
-  // Конфетти
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -132,8 +132,7 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
             className="ios-glass-btn win-again-btn"
             onClick={onRestart}
           >
-            {/* Одинарная чистая иконка */}
-            <img src="/Again.png" alt="" className="again-icon-img" />
+            <SmartIcon src="/Again.png" type="again" className="again-icon-img" />
             <span>Сыграть еще</span>
           </button>
         </div>
