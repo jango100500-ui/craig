@@ -171,16 +171,10 @@ html, body {
 }
 
 .settings-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   filter: brightness(0) invert(1);
-}
-
-.settings-svg-fallback {
-  width: 20px;
-  height: 20px;
-  opacity: 0.9;
 }
 
 /* ===================================================
@@ -593,12 +587,6 @@ html, body {
   filter: brightness(0) invert(1);
 }
 
-.again-svg-fallback {
-  width: 18px;
-  height: 18px;
-  opacity: 0.95;
-}
-
 /* ===================================================
    ЭКРАН РАЗМЫШЛЕНИЙ (REFLECTIONS SCREEN)
    =================================================== */
@@ -613,25 +601,35 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: calc(18px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  justify-content: center;
+  padding: calc(16px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
   animation: fadeIn 0.25s ease-out;
+}
+
+.reflections-inner-container {
+  width: 100%;
+  max-width: 360px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .reflections-header {
   width: 100%;
-  max-width: 360px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-shrink: 0;
 }
 
+/* Крестик СПРАВА */
 .reflections-close-btn {
   position: absolute;
-  left: 0;
+  right: 0;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -662,15 +660,15 @@ html, body {
   text-transform: uppercase;
 }
 
-/* Скролл списка размышлений */
+/* Скроллируемый таймлайн */
 .reflections-scroll-container {
   width: 100%;
-  max-width: 360px;
   flex-grow: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y !important;
-  padding-right: 4px;
+  padding-right: 6px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
 }
@@ -698,7 +696,6 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-bottom: 24px;
 }
 
 .timeline-node {
@@ -766,6 +763,28 @@ html, body {
   line-height: 1.45;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.75);
+}
+
+/* Фиксированная зона с кнопкой Скопировать */
+.reflections-footer {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.copy-btn {
+  width: 100%;
+  border-radius: 18px; /* Прямоугольная капсула */
+  padding: 15px 24px;
+  font-size: 1.05rem;
+}
+
+.copy-btn.copied {
+  background: rgba(48, 209, 88, 0.25);
+  border-color: rgba(48, 209, 88, 0.5);
+  color: #30d158;
 }
 
 /* ===================================================
@@ -854,12 +873,6 @@ html, body {
   height: 18px;
   object-fit: contain;
   filter: brightness(0) invert(1);
-}
-
-.cross-svg-fallback {
-  width: 16px;
-  height: 16px;
-  opacity: 0.85;
 }
 
 .settings-section {
