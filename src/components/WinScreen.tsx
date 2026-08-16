@@ -21,7 +21,7 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
     return WIN_PHRASES[Math.floor(Math.random() * WIN_PHRASES.length)];
   });
 
-  // Запуск праздничного конфетти на Canvas
+  // Конфетти
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -68,8 +68,8 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
       particles.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.35; // Гравитация
-        p.vx *= 0.98; // Трение воздуха
+        p.vy += 0.35;
+        p.vx *= 0.98;
         p.rotation += p.vRot;
         p.opacity = Math.max(0, p.opacity - 0.005);
 
@@ -107,7 +107,6 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
 
       <main className="win-screen-container">
         <div className="win-content-block">
-          {/* Анимация Yeah.json */}
           <div className="win-lottie-slot">
             <LottieIcon 
               src="/Yeah.json" 
@@ -119,7 +118,6 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
           <h1 className="win-phrase-title">{phrase}</h1>
         </div>
 
-        {/* Кнопки действий */}
         <div className="win-buttons-group">
           <button 
             type="button" 
@@ -134,17 +132,8 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
             className="ios-glass-btn win-again-btn"
             onClick={onRestart}
           >
-            <img 
-              src="/Again.png" 
-              alt="" 
-              className="again-icon-img"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
-            <svg className="again-svg-fallback" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
-            </svg>
+            {/* Одинарная чистая иконка */}
+            <img src="/Again.png" alt="" className="again-icon-img" />
             <span>Сыграть еще</span>
           </button>
         </div>
