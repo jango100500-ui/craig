@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LottieIcon } from './LottieIcon';
-import { SmartIcon } from './SmartIcon';
 
 const WIN_PHRASES = [
   'Я как всегда хорош!',
@@ -132,7 +131,7 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
             className="ios-glass-btn win-again-btn"
             onClick={onRestart}
           >
-            <SmartIcon src="/Again.png" type="again" className="again-icon-img" />
+            <img src="/Again.png" alt="" className="again-icon-img" />
             <span>Сыграть еще</span>
           </button>
         </div>
