@@ -16,31 +16,25 @@ export interface ModelOption {
   tag?: string;
 }
 
-// Полный пул моделей семейства 3.x и 2.5
+// Проверенные активные модели Google Gemini API
 export const AVAILABLE_MODELS: ModelOption[] = [
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', tag: 'Рекомендуемая' },
-  { id: 'gemini-3.6-flash-lite', name: 'Gemini 3.6 Flash Lite', tag: 'Ультра-быстрая' },
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash' },
-  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite' },
-  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', tag: 'Новинка' },
-  { id: 'gemini-3.7-flash-lite', name: 'Gemini 3.7 Flash Lite' },
-  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', tag: 'Максимальный ум' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' }
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', tag: 'Рекомендуемая' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash', tag: 'Быстрая' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite', tag: 'Легкая' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', tag: 'Умная' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview' }
 ];
 
 const STORAGE_KEY = 'craig_selected_model';
 
 export function getSelectedModelId(): string {
-  return localStorage.getItem(STORAGE_KEY) || 'gemini-3.6-flash';
+  return localStorage.getItem(STORAGE_KEY) || 'gemini-2.5-flash';
 }
 
 export function setSelectedModelId(modelId: string): void {
   localStorage.setItem(STORAGE_KEY, modelId);
 }
 
-// Поддержка одного или нескольких ключей через запятую: "AIza...,AIza..."
 function getApiKeys(): string[] {
   const envKey = (import.meta as unknown as { env?: { VITE_GEMINI_API_KEY?: string } }).env?.VITE_GEMINI_API_KEY;
   if (!envKey || envKey.trim() === '') {
@@ -56,9 +50,9 @@ async function getSystemPrompt(): Promise<string> {
       return await res.text();
     }
   } catch (e) {
-    console.warn('[Craig] Загружен резервный системный промпт');
+    console.warn('[Craig] Загружен базовый промпт');
   }
-  return `Ты — Крегг, ИИ-Акинатор. Угадывай персонажей бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
+  return `Ты — Крегг, ИИ-Акинатор. Твоя цель — угадать загаданного персонажа бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
 }
 
 function extractValidJSON(raw: string): AIResponse {
@@ -69,7 +63,22 @@ function extractValidJSON(raw: string): AIResponse {
     if (match) {
       return JSON.parse(match[0]);
     }
-    throw new Error(`Ответ не содержит корректного JSON: ${raw}`);
+    throw new Error(`Ответ не содержит валидного JSON: ${raw}`);
+  }
+}
+
+// Запрос с жестким прерыванием по таймауту (не дает Креггу зависнуть)
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 5000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    return response;
+  } finally {
+    clearTimeout(id);
   }
 }
 
@@ -78,7 +87,6 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
   const systemPrompt = await getSystemPrompt();
 
   const userChosen = getSelectedModelId();
-  // Модель пользователя идет первой, а за ней весь огромный пул 3.x моделей для ротации
   const allModels = [
     userChosen,
     ...AVAILABLE_MODELS.map(m => m.id).filter(id => id !== userChosen)
@@ -86,11 +94,10 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
 
   let lastErrorMsg = '';
 
-  // Перебираем ключи и модели: если одна уперлась в 429, мгновенно пробуем следующую
   for (const apiKey of keys) {
     for (const model of allModels) {
       try {
-        console.log(`[Craig AI] Запрос к ${model}...`);
+        console.log(`[Craig AI] Отправка запроса к ${model}...`);
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
         const payload = {
@@ -104,16 +111,15 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
           }
         };
 
-        const response = await fetch(url, {
+        const response = await fetchWithTimeout(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        });
+        }, 5000);
 
         if (!response.ok) {
           const errDetails = await response.text();
-          // Если 429 (лимит квоты) или 404 — сразу переходим к следующей модели!
-          console.warn(`[Craig AI] Модель ${model} вернула статус ${response.status}. Авто-переключение на другую модель...`);
+          console.warn(`[Craig AI] ${model} вернул статус ${response.status}. Пробуем следующую...`);
           lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
           continue;
         }
@@ -121,20 +127,18 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
         const data = await response.json();
         const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-        if (!rawText) {
-          continue;
-        }
+        if (!rawText) continue;
 
         const parsed = extractValidJSON(rawText);
         console.log(`✅ [Craig AI] Успешный ответ от ${model}:`, parsed);
         return parsed;
 
       } catch (err: any) {
-        console.warn(`[Craig AI] Ошибка с ${model}:`, err.message);
-        lastErrorMsg = err.message || String(err);
+        lastErrorMsg = err.name === 'AbortError' ? `Таймаут модели ${model}` : (err.message || String(err));
+        console.warn(`[Craig AI] Ошибка модели ${model}:`, lastErrorMsg);
       }
     }
   }
 
-  throw new Error(lastErrorMsg || 'Все доступные модели временно исчерпали квоту. Попробуйте через минуту.');
+  throw new Error(lastErrorMsg || 'Все доступные модели Gemini временно не отвечают. Попробуйте снова.');
 }
