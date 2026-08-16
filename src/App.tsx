@@ -5,7 +5,6 @@ import { GameScreen } from './components/GameScreen';
 import { SettingsScreen } from './components/SettingsScreen';
 import { WinScreen } from './components/WinScreen';
 import { ReflectionsScreen, ReflectionItem } from './components/ReflectionsScreen';
-import { SmartIcon } from './components/SmartIcon';
 
 const BUTTON_OPTIONS = [
   'Я загадал!',
@@ -113,7 +112,7 @@ export const App: React.FC = () => {
             onClick={() => setIsSettingsOpen(true)}
             aria-label="Настройки"
           >
-            <SmartIcon src="/settings.png" type="settings" className="settings-icon-img" />
+            <img src="/settings.png" alt="Настройки" className="settings-icon-img" />
           </button>
 
           <main className="screen-container">
