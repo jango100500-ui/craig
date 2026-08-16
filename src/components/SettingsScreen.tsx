@@ -37,18 +37,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             onClick={handleClose}
             aria-label="Закрыть"
           >
-            <img 
-              src="/Cross.png" 
-              alt=""
-              className="cross-icon-img"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
-            <svg className="cross-svg-fallback" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            {/* Одинарная чистая иконка Cross.png */}
+            <img src="/Cross.png" alt="Закрыть" className="cross-icon-img" />
           </button>
         </header>
 
@@ -73,7 +63,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
           </button>
 
           <p className="settings-caption">
-            Выберите приоритетную модель. При исчерпании квоты Крегг автоматически продолжит игру на других моделях семейства 3.x.
+            Выберите модель для Крегга. При исчерпании квоты будет задействована резервная модель семейства 3.x.
           </p>
 
           {isOpenList && (
