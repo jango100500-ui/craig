@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { AVAILABLE_MODELS, getSelectedModelId, setSelectedModelId } from '../services/gemini';
-import { SmartIcon } from './SmartIcon';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -38,7 +37,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             onClick={handleClose}
             aria-label="Закрыть"
           >
-            <SmartIcon src="/Cross.png" type="cross" className="cross-icon-img" />
+            <img src="/Cross.png" alt="Закрыть" className="cross-icon-img" />
           </button>
         </header>
 
@@ -63,7 +62,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
           </button>
 
           <p className="settings-caption">
-            Выберите приоритетную модель. При сбое Крегг автоматически переключится на резервную без остановки игры.
+            Выберите модель для Крегга. При исчерпании квоты будет задействована резервная модель семейства 3.x.
           </p>
 
           {isOpenList && (
