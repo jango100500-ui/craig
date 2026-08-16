@@ -301,10 +301,20 @@ html, body {
 }
 
 @keyframes jellyPop {
-  0% { opacity: 0; transform: scale(0.3) translateY(12px); }
-  50% { transform: scale(1.22, 0.82) translateY(-4px); }
-  75% { transform: scale(0.92, 1.08) translateY(1px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(12px);
+  }
+  50% {
+    transform: scale(1.22, 0.82) translateY(-4px);
+  }
+  75% {
+    transform: scale(0.92, 1.08) translateY(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .loading-dots { display: flex; align-items: center; }
@@ -626,7 +636,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Крестик СПРАВА */
 .reflections-close-btn {
   position: absolute;
   right: 0;
@@ -660,7 +669,6 @@ html, body {
   text-transform: uppercase;
 }
 
-/* Скроллируемый таймлайн */
 .reflections-scroll-container {
   width: 100%;
   flex-grow: 1;
@@ -774,9 +782,10 @@ html, body {
   padding-top: 8px;
 }
 
+/* Полностью круглые углы (Pill-форма) */
 .copy-btn {
   width: 100%;
-  border-radius: 18px; /* Прямоугольная капсула */
+  border-radius: 9999px;
   padding: 15px 24px;
   font-size: 1.05rem;
 }
