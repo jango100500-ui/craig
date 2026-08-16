@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { askCraig, AIResponse, ChatMessage } from '../services/gemini';
 import { LottieIcon } from './LottieIcon';
+import { ReflectionItem } from './ReflectionsScreen';
 
 const THINKING_PHRASES = [
   'Хм, дай мне подумать…',
@@ -11,13 +12,16 @@ const THINKING_PHRASES = [
 ];
 
 interface GameScreenProps {
-  onRestart: () => void;
+  onWin: (reflections: ReflectionItem[]) => void;
 }
 
-export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
+export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [currentAI, setCurrentAI] = useState<AIResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Список всех размышлений за игру
+  const [reflectionsList, setReflectionsList] = useState<ReflectionItem[]>([]);
 
   const [isThinking, setIsThinking] = useState(false);
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
@@ -27,7 +31,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // Первый вопрос от Крегга
+  // Первый вопрос
   const startInitialQuestion = async () => {
     setIsThinking(true);
     setErrorMessage(null);
@@ -45,6 +49,16 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         initialUserMsg,
         { role: 'model', parts: [{ text: JSON.stringify(firstAI) }] }
       ]);
+      
+      if (firstAI.reflection) {
+        setReflectionsList([
+          {
+            qunumber: firstAI.qunumber,
+            question: firstAI.answer,
+            reflection: firstAI.reflection
+          }
+        ]);
+      }
     } catch (err: any) {
       console.error('[Craig Error]', err);
       setErrorMessage(err.message || 'Ошибка подключения к ИИ');
@@ -77,13 +91,13 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // Ответ игрока
+  // Обработка ответа
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
+    // Пользователь подтвердил победу Крегга
     if (currentAI.character && answerText === 'Да, угадал!') {
-      alert(`🎉 Крегг угадал твоего персонажа: ${currentAI.character}!`);
-      onRestart();
+      onWin(reflectionsList);
       return;
     }
 
@@ -113,6 +127,17 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
         ...updatedHistory,
         { role: 'model', parts: [{ text: JSON.stringify(nextAI) }] }
       ]);
+
+      if (nextAI.reflection) {
+        setReflectionsList((prev) => [
+          ...prev,
+          {
+            qunumber: nextAI.qunumber,
+            question: nextAI.answer,
+            reflection: nextAI.reflection
+          }
+        ]);
+      }
     } catch (err: any) {
       console.error('[Craig Error]', err);
       setErrorMessage(err.message || 'Ошибка генерации ответа');
@@ -139,7 +164,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </button>
         </div>
       ) : isThinking ? (
-        /* Экран раздумий с правильными пробелами */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -167,7 +191,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onRestart }) => {
           </div>
         </div>
       ) : (
-        /* Экран вопроса */
         <div className="game-active-view">
           <div className="game-header-area">
             <div className="game-lottie-slot">
