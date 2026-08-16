@@ -30,7 +30,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
   return (
     <div className="reflections-screen">
       <div className="reflections-inner-container">
-        {/* Шапка: Крестик справа без дублирования */}
         <header className="reflections-header">
           <h2 className="reflections-screen-title">РАЗМЫШЛЕНИЯ</h2>
 
@@ -44,7 +43,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
           </button>
         </header>
 
-        {/* Скроллируемый таймлайн */}
         <div className="reflections-scroll-container">
           {reflections.length === 0 ? (
             <div className="reflections-empty">
@@ -78,7 +76,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
           )}
         </div>
 
-        {/* Прямоугольная кнопка Скопировать внизу */}
         <footer className="reflections-footer">
           <button 
             type="button" 
