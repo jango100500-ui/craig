@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SmartIcon } from './SmartIcon';
 
 export interface ReflectionItem {
   qunumber: number;
@@ -17,7 +18,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
   const handleCopy = () => {
     if (reflections.length === 0) return;
 
-    // Форматирование чистого текста без Markdown
     const formattedText = reflections
       .map((item) => `Вопрос ${item.qunumber}\n${item.reflection.trim()}`)
       .join('\n\n');
@@ -31,7 +31,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
   return (
     <div className="reflections-screen">
       <div className="reflections-inner-container">
-        {/* Шапка: Заголовок по центру, крестик СПРАВА */}
         <header className="reflections-header">
           <h2 className="reflections-screen-title">РАЗМЫШЛЕНИЯ</h2>
 
@@ -41,11 +40,10 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
             onClick={onClose}
             aria-label="Закрыть"
           >
-            <img src="/Cross.png" alt="Закрыть" className="cross-icon-img" />
+            <SmartIcon src="/Cross.png" type="cross" className="cross-icon-img" />
           </button>
         </header>
 
-        {/* Скроллируемая область таймлайна */}
         <div className="reflections-scroll-container">
           {reflections.length === 0 ? (
             <div className="reflections-empty">
@@ -57,7 +55,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
                 const isLast = index === reflections.length - 1;
                 return (
                   <div key={index} className="timeline-node">
-                    {/* Левая колонка: кружок с цифрой и линия к следующему */}
                     <div className="timeline-left-col">
                       <div className="timeline-badge-circle">
                         {item.qunumber}
@@ -65,7 +62,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
                       {!isLast && <div className="timeline-vertical-line" />}
                     </div>
 
-                    {/* Правая колонка: Вопрос X и мысли */}
                     <div className="timeline-right-col">
                       <h3 className="timeline-node-title">
                         Вопрос {item.qunumber}
@@ -81,7 +77,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
           )}
         </div>
 
-        {/* Фиксированная нижняя зона с кнопкой Скопировать */}
         <footer className="reflections-footer">
           <button 
             type="button" 
