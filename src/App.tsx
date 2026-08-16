@@ -3,6 +3,8 @@ import lottie from 'lottie-web';
 import { LoadingScreen } from './components/LoadingScreen';
 import { GameScreen } from './components/GameScreen';
 import { SettingsScreen } from './components/SettingsScreen';
+import { WinScreen } from './components/WinScreen';
+import { ReflectionsScreen, ReflectionItem } from './components/ReflectionsScreen';
 
 const BUTTON_OPTIONS = [
   'Я загадал!',
@@ -11,11 +13,16 @@ const BUTTON_OPTIONS = [
   'Поехали!'
 ];
 
+type AppScreen = 'home' | 'loading' | 'game' | 'win' | 'reflections_loading' | 'reflections';
+
 export const App: React.FC = () => {
   const lottieContainer = useRef<HTMLDivElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'loading' | 'game'>('home');
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('home');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Хранилище размышлений за текущую игру
+  const [savedReflections, setSavedReflections] = useState<ReflectionItem[]>([]);
 
   const [buttonText] = useState(() => {
     const randomIndex = Math.floor(Math.random() * BUTTON_OPTIONS.length);
@@ -52,6 +59,15 @@ export const App: React.FC = () => {
     return () => anim?.destroy();
   }, []);
 
+  const handleWin = (reflections: ReflectionItem[]) => {
+    setSavedReflections(reflections);
+    setCurrentScreen('win');
+  };
+
+  const handleRestart = () => {
+    setCurrentScreen('home');
+  };
+
   return (
     <>
       <div className="landscape-lock-overlay">
@@ -64,20 +80,40 @@ export const App: React.FC = () => {
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {/* Оверлей загрузки */}
+      {/* 1. Загрузка перед стартом игры */}
       {currentScreen === 'loading' && (
         <LoadingScreen onComplete={() => setCurrentScreen('game')} />
       )}
 
-      {/* Экран игры */}
-      {currentScreen === 'game' && (
-        <GameScreen onRestart={() => setCurrentScreen('home')} />
+      {/* 2. Загрузка перед экраном размышлений */}
+      {currentScreen === 'reflections_loading' && (
+        <LoadingScreen onComplete={() => setCurrentScreen('reflections')} />
       )}
 
-      {/* Главный экран */}
+      {/* 3. Экран игры */}
+      {currentScreen === 'game' && (
+        <GameScreen onWin={handleWin} />
+      )}
+
+      {/* 4. Экран победы (Yeah.json + фраза + конфетти) */}
+      {currentScreen === 'win' && (
+        <WinScreen 
+          onRestart={handleRestart}
+          onViewReflections={() => setCurrentScreen('reflections_loading')}
+        />
+      )}
+
+      {/* 5. Экран размышлений */}
+      {currentScreen === 'reflections' && (
+        <ReflectionsScreen 
+          reflections={savedReflections}
+          onClose={() => setCurrentScreen('win')}
+        />
+      )}
+
+      {/* 6. Главный экран */}
       {currentScreen === 'home' && (
         <>
-          {/* Круглая стеклянная кнопка настроек в правом верхнем углу */}
           <button 
             type="button" 
             className="home-settings-btn"
@@ -89,11 +125,9 @@ export const App: React.FC = () => {
               alt=""
               className="settings-icon-img"
               onError={(e) => {
-                // Если картинки нет — скрываем битую картинку
                 (e.target as HTMLElement).style.display = 'none';
               }} 
             />
-            {/* Резервная SVG шестеренка */}
             <svg className="settings-svg-fallback" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
