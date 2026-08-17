@@ -73,14 +73,17 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
+      {/* Экран настроек */}
       {isSettingsOpen && (
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
+      {/* Экран игры */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
+      {/* Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
@@ -88,6 +91,7 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -95,16 +99,20 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* Главный экран */}
       {currentScreen === 'home' && (
         <>
-          <button 
-            type="button" 
-            className="home-settings-btn"
-            onClick={() => setIsSettingsOpen(true)}
-            aria-label="Настройки"
-          >
-            <img src="/Settings.png" alt="Настройки" className="settings-icon-img" />
-          </button>
+          {/* Кнопка настроек скрывается, когда настройки открыты */}
+          {!isSettingsOpen && (
+            <button 
+              type="button" 
+              className="home-settings-btn"
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="Настройки"
+            >
+              <img src="/Settings.png" alt="Настройки" className="settings-icon-img" />
+            </button>
+          )}
 
           <main className="screen-container">
             <div className="animation-slot">
@@ -116,7 +124,7 @@ export const App: React.FC = () => {
             </div>
 
             <div className="text-group">
-              <h1 className="hero-title">
+              <h1 className="hero-title hero-title-rounded">
                 Загадай любого персонажа
               </h1>
               <p className="hero-subtitle">
@@ -124,13 +132,17 @@ export const App: React.FC = () => {
               </p>
             </div>
 
+            {/* Акцентная зеленая кнопка старта #87D50C */}
             <button 
               type="button" 
-              className="ios-glass-btn"
+              className="ios-glass-btn green-accent-btn"
               onClick={() => setCurrentScreen('game')}
             >
               {buttonText}
             </button>
+
+            {/* Подпись автора */}
+            <span className="author-tagline">Создан @temkazavr</span>
           </main>
         </>
       )}
