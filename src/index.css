@@ -232,7 +232,6 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Яркий зеленый акцент #87D50C */
 .green-accent-btn {
   background: var(--green-accent) !important;
   color: #0b0c0f !important;
@@ -757,7 +756,7 @@ html, body {
 }
 
 /* ===================================================
-   ЭКРАН НАСТРОЕК (SETTINGS SCREEN С ПЕРЕКЛЮЧАТЕЛЕМ)
+   ЭКРАН НАСТРОЕК (SETTINGS SCREEN)
    =================================================== */
 .settings-screen-overlay {
   position: fixed;
@@ -858,7 +857,6 @@ html, body {
   letter-spacing: -0.015em;
 }
 
-/* Бейджи провайдеров */
 .model-tag-badge {
   font-size: 0.72rem;
   font-weight: 700;
@@ -952,23 +950,23 @@ html, body {
 }
 
 /* ===================================================
-   iOS ПЕРЕКЛЮЧАТЕЛЬ УВЕДОМЛЕНИЙ
+   БЛОК УВЕДОМЛЕНИЙ ОТ КРЕГГА
    =================================================== */
+.settings-notif-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .settings-toggle-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 12px 18px;
+  min-height: 48px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-}
-
-.toggle-text-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  text-align: left;
+  border-radius: 9999px; /* Стеклянная плашка в едином капсульном стиле */
 }
 
 .toggle-title {
@@ -976,11 +974,6 @@ html, body {
   font-weight: 600;
   color: #ffffff;
   letter-spacing: -0.01em;
-}
-
-.toggle-subtitle {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.45);
 }
 
 .ios-switch-btn {
