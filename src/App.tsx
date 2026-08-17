@@ -73,17 +73,14 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      {/* Экран настроек */}
       {isSettingsOpen && (
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {/* 1. Экран игры (мгновенный переход) */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
-      {/* 2. Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
@@ -91,7 +88,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 3. Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -99,7 +95,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 4. Главный экран */}
       {currentScreen === 'home' && (
         <>
           <button 
