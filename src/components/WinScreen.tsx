@@ -22,7 +22,6 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
   });
 
   useEffect(() => {
-    // Двойная победная виброотдача при выигрыше
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate([25, 50, 25]);
     }
@@ -123,17 +122,17 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
         </div>
 
         <div className="win-buttons-group">
-          {/* Кнопка с иконкой Brain.png в натуральном цвете справа */}
+          {/* Зеленая акцентная кнопка #87D50C + Иконка Brain.png справа в натуральном цвете */}
           <button 
             type="button" 
-            className="ios-glass-btn btn-with-right-icon"
+            className="ios-glass-btn green-accent-btn btn-with-right-icon"
             onClick={onViewReflections}
           >
             <span>Посмотреть размышления</span>
             <img src="/Brain.png" alt="" className="btn-icon-right natural-icon" />
           </button>
 
-          {/* Кнопка с иконкой Again.png справа */}
+          {/* Кнопка Сыграть еще + Иконка Again.png справа */}
           <button 
             type="button" 
             className="ios-glass-btn btn-with-right-icon"
