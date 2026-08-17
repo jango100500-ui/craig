@@ -28,7 +28,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
 
   return (
     <div className={`settings-screen-overlay ${isClosing ? 'closing' : ''}`}>
-      {/* Кнопка закрытия зафиксирована в правом верхнем углу */}
       <button 
         type="button" 
         className="settings-fixed-close-btn"
@@ -44,7 +43,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
         </header>
 
         <div className="settings-section">
-          {/* 1. ПРИОРИТЕТ: ВЫБОР МОДЕЛИ НАВЕРХУ */}
+          {/* Выбор модели на первом месте */}
           <div className="model-select-wrapper">
             <button 
               type="button"
@@ -96,7 +95,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             )}
           </div>
 
-          {/* 2. ПОЛОСКА ЛИМИТОВ СНИЗУ: СТЕКЛЯННАЯ ПЛАШКА БЕЗ СВЕЧЕНИЙ */}
+          {/* Шкала лимитов на втором месте */}
           <div className="energy-card">
             <div className="energy-flask-track">
               <div 
