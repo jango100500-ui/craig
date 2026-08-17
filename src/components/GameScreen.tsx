@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { askCraig, AIResponse, ChatMessage, CraigApiError } from '../services/gemini';
+import { askCraig, AIResponse, ChatMessage, CraigApiError, deductEnergyForGame } from '../services/gemini';
 import { LottieIcon } from './LottieIcon';
 import { ReflectionItem } from './ReflectionsScreen';
+
+// Новые дерзкие стартовые фразы Крегга
+const INITIAL_PHRASES = [
+  'Крегг готовит список вопросов…',
+  'Крегг будет здесь через секундочку…',
+  'Крегг готовится к своей неминуемой победе…',
+  'Крегг изучает твою ауру…',
+  'Крегг уже знает, как тебя обыграть…'
+];
 
 const THINKING_PHRASES = [
   'Хм, дай мне подумать…',
@@ -27,7 +36,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [currentAI, setCurrentAI] = useState<AIResponse | null>(null);
   
-  // Состояние ошибки
   const [errorCode, setErrorCode] = useState<string | number | null>(null);
   const [errorPhrase] = useState(() => {
     return ERROR_PHRASES[Math.floor(Math.random() * ERROR_PHRASES.length)];
@@ -36,18 +44,22 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
   const [reflectionsList, setReflectionsList] = useState<ReflectionItem[]>([]);
 
   const [isThinking, setIsThinking] = useState(false);
-  const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
+  const [thinkingPhrase, setThinkingPhrase] = useState(() => {
+    return INITIAL_PHRASES[Math.floor(Math.random() * INITIAL_PHRASES.length)];
+  });
 
-  // Защита от мисклика (5.0s)
   const [countdown, setCountdown] = useState<number>(5.0);
   const [isLocked, setIsLocked] = useState<boolean>(true);
   const [numberAnimKey, setNumberAnimKey] = useState<number>(0);
 
-  // Первый вопрос
   const startInitialQuestion = async () => {
     setIsThinking(true);
     setErrorCode(null);
-    setThinkingPhrase('Крегг подключается к разуму…');
+    const startPhrase = INITIAL_PHRASES[Math.floor(Math.random() * INITIAL_PHRASES.length)];
+    setThinkingPhrase(startPhrase);
+
+    // Списание энергии на партию
+    deductEnergyForGame();
 
     const initialUserMsg: ChatMessage = {
       role: 'user',
@@ -83,7 +95,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
     startInitialQuestion();
   }, []);
 
-  // Таймер защиты от мисклика
   useEffect(() => {
     if (!currentAI) return;
     setIsLocked(true);
@@ -103,7 +114,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // Ответ игрока
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
@@ -161,7 +171,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
 
   return (
     <main className="game-screen-container">
-      {/* 1. НОВЫЙ ЭКРАН ОШИБКИ (Error.json + Рандомная фраза + Код ошибки + На главную) */}
       {errorCode !== null ? (
         <div className="game-error-view">
           <div className="error-content-block">
@@ -190,7 +199,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
           </div>
         </div>
       ) : isThinking ? (
-        /* 2. ЭКРАН РАЗДУМИЙ */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -218,7 +226,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
           </div>
         </div>
       ) : (
-        /* 3. ЭКРАН ВОПРОСА */
         <div className="game-active-view">
           <div className="game-header-area">
             <div className="game-lottie-slot">
