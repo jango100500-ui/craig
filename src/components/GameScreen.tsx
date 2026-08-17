@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { askCraig, AIResponse, ChatMessage } from '../services/gemini';
+import { askCraig, AIResponse, ChatMessage, CraigApiError } from '../services/gemini';
 import { LottieIcon } from './LottieIcon';
 import { ReflectionItem } from './ReflectionsScreen';
 
@@ -11,16 +11,28 @@ const THINKING_PHRASES = [
   'Отсекаю лишних кандидатов…'
 ];
 
+const ERROR_PHRASES = [
+  'Упс! Возникла ошибка!',
+  'Ой, запиночка!',
+  'Что-то пошло не так!',
+  'Крегг наткнулся на преграду!'
+];
+
 interface GameScreenProps {
   onWin: (reflections: ReflectionItem[]) => void;
+  onRestart: () => void;
 }
 
-export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
+export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [currentAI, setCurrentAI] = useState<AIResponse | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
+  // Состояние ошибки
+  const [errorCode, setErrorCode] = useState<string | number | null>(null);
+  const [errorPhrase] = useState(() => {
+    return ERROR_PHRASES[Math.floor(Math.random() * ERROR_PHRASES.length)];
+  });
 
-  // Список всех размышлений за игру
   const [reflectionsList, setReflectionsList] = useState<ReflectionItem[]>([]);
 
   const [isThinking, setIsThinking] = useState(false);
@@ -34,7 +46,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
   // Первый вопрос
   const startInitialQuestion = async () => {
     setIsThinking(true);
-    setErrorMessage(null);
+    setErrorCode(null);
     setThinkingPhrase('Крегг подключается к разуму…');
 
     const initialUserMsg: ChatMessage = {
@@ -61,7 +73,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
       }
     } catch (err: any) {
       console.error('[Craig Error]', err);
-      setErrorMessage(err.message || 'Ошибка подключения к ИИ');
+      setErrorCode(err instanceof CraigApiError ? err.code : '500');
     } finally {
       setIsThinking(false);
     }
@@ -91,11 +103,10 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
     return () => clearInterval(interval);
   }, [currentAI?.qunumber, currentAI?.answer]);
 
-  // Обработка ответа
+  // Ответ игрока
   const handleUserAnswer = async (answerText: string) => {
     if (isLocked || isThinking || !currentAI) return;
 
-    // Пользователь подтвердил победу Крегга
     if (currentAI.character && answerText === 'Да, угадал!') {
       onWin(reflectionsList);
       return;
@@ -104,7 +115,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
     const randomPhrase = THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)];
     setThinkingPhrase(randomPhrase);
     setIsThinking(true);
-    setErrorMessage(null);
+    setErrorCode(null);
 
     const nextQNum = (currentAI.qunumber || 1) + 1;
     const userReplyMsg: ChatMessage = {
@@ -140,7 +151,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
       }
     } catch (err: any) {
       console.error('[Craig Error]', err);
-      setErrorMessage(err.message || 'Ошибка генерации ответа');
+      setErrorCode(err instanceof CraigApiError ? err.code : '500');
     } finally {
       setIsThinking(false);
     }
@@ -150,20 +161,36 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
 
   return (
     <main className="game-screen-container">
-      {errorMessage ? (
+      {/* 1. НОВЫЙ ЭКРАН ОШИБКИ (Error.json + Рандомная фраза + Код ошибки + На главную) */}
+      {errorCode !== null ? (
         <div className="game-error-view">
-          <div className="game-error-icon">⚠️</div>
-          <h2 className="game-error-title">Сбой запроса</h2>
-          <p className="game-error-text">{errorMessage}</p>
-          <button 
-            type="button" 
-            className="ios-glass-btn"
-            onClick={startInitialQuestion}
-          >
-            Повторить запрос
-          </button>
+          <div className="error-content-block">
+            <div className="error-lottie-slot">
+              <LottieIcon 
+                src="/Error.json" 
+                className="error-lottie-host" 
+                fallbackClass="ios-skeleton-box" 
+              />
+            </div>
+
+            <div className="error-text-block">
+              <h2 className="error-phrase-title">{errorPhrase}</h2>
+              <p className="error-code-text">Код ошибки — {errorCode}</p>
+            </div>
+          </div>
+
+          <div className="error-buttons-group">
+            <button 
+              type="button" 
+              className="ios-glass-btn"
+              onClick={onRestart}
+            >
+              На главную
+            </button>
+          </div>
         </div>
       ) : isThinking ? (
+        /* 2. ЭКРАН РАЗДУМИЙ */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -191,6 +218,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin }) => {
           </div>
         </div>
       ) : (
+        /* 3. ЭКРАН ВОПРОСА */
         <div className="game-active-view">
           <div className="game-header-area">
             <div className="game-lottie-slot">
