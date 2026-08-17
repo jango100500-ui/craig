@@ -29,18 +29,19 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
 
   return (
     <div className="reflections-screen">
+      {/* Кнопка закрытия в той же правой точке */}
+      <button 
+        type="button" 
+        className="settings-fixed-close-btn"
+        onClick={onClose}
+        aria-label="Закрыть"
+      >
+        <img src="/Cross.png" alt="Закрыть" className="cross-icon-img" />
+      </button>
+
       <div className="reflections-inner-container">
         <header className="reflections-header">
-          <h2 className="reflections-screen-title">РАЗМЫШЛЕНИЯ</h2>
-
-          <button 
-            type="button" 
-            className="reflections-close-btn"
-            onClick={onClose}
-            aria-label="Закрыть"
-          >
-            <img src="/Cross.png" alt="Закрыть" className="cross-icon-img" />
-          </button>
+          <h2 className="reflections-screen-title">Размышления</h2>
         </header>
 
         <div className="reflections-scroll-container">
