@@ -8,9 +8,6 @@
   --glass-bg: rgba(30, 32, 40, 0.65);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-active: rgba(45, 48, 60, 0.85);
-  --green-accent: #87D50C;
-  --green-border: #9ded15;
-  --yellow-bulb: #F8C70F;
   --purple-flat: #a855f7;
 }
 
@@ -58,7 +55,7 @@ html, body {
 }
 
 /* ===================================================
-   ГЛАВНЫЙ ЭКРАН (+4% МАСШТАБИРОВАНИЕ)
+   ГЛАВНЫЙ ЭКРАН (HOME SCREEN)
    =================================================== */
 .screen-container {
   display: flex;
@@ -66,32 +63,37 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 376px;
+  max-width: 360px;
   padding: 0 24px;
   text-align: center;
 }
 
 .animation-slot {
   position: relative;
-  width: 142px;
-  height: 142px;
-  margin-bottom: 26px;
+  width: 136px;
+  height: 136px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.home-lottie-host {
+  width: 136px;
+  height: 136px;
+}
+
 .ios-skeleton-box {
   width: 100%;
   height: 100%;
-  border-radius: 32px;
+  border-radius: 30px;
   border: none;
   background-color: rgba(255, 255, 255, 0.03);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
 .ios-skeleton-box.game-mock {
-  border-radius: 24px;
+  border-radius: 22px;
 }
 
 @keyframes smoothColorFade {
@@ -124,29 +126,23 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 36px;
+  gap: 12px;
+  margin-bottom: 34px;
   width: 100%;
 }
 
 .hero-title {
-  font-size: 1.85rem;
+  font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.22;
+  line-height: 1.2;
   color: var(--text-primary);
 }
 
-.hero-title-rounded {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
 .hero-subtitle {
-  font-size: 1.08rem;
+  font-size: 1.02rem;
   font-weight: 400;
-  line-height: 1.48;
+  line-height: 1.45;
   letter-spacing: -0.012em;
   color: var(--text-secondary);
 }
@@ -166,8 +162,8 @@ html, body {
   position: fixed;
   top: calc(18px + env(safe-area-inset-top));
   right: 20px;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
@@ -204,12 +200,12 @@ html, body {
 }
 
 /* ===================================================
-   iOS GLASS КНОПКИ (+ АКЦЕНТНЫЙ ЗЕЛЕНЫЙ)
+   iOS GLASS КНОПКА
    =================================================== */
 .ios-glass-btn {
   width: 100%;
-  max-width: 334px;
-  padding: 16px 26px;
+  max-width: 320px;
+  padding: 15px 24px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -217,7 +213,7 @@ html, body {
   border-radius: 9999px;
   color: #ffffff;
   font-family: inherit;
-  font-size: 1.16rem;
+  font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   cursor: pointer;
@@ -234,20 +230,6 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Сочный зеленый акцент #87D50C */
-.green-accent-btn {
-  background: var(--green-accent) !important;
-  color: #0b0c0f !important;
-  border: 1px solid var(--green-border) !important;
-  font-weight: 750 !important;
-  text-shadow: none !important;
-}
-
-.green-accent-btn:active:not(.locked) {
-  opacity: 0.92;
-  transform: scale(0.96);
-}
-
 .ios-glass-btn.locked {
   cursor: not-allowed;
   opacity: 0.6;
@@ -256,34 +238,31 @@ html, body {
 }
 
 .ios-glass-btn.win-btn {
-  background: rgba(48, 209, 88, 0.22);
-  border-color: rgba(48, 209, 88, 0.45);
+  background: rgba(48, 209, 88, 0.2);
+  border-color: rgba(48, 209, 88, 0.4);
 }
 
-/* Иконки справа в кнопках */
 .btn-with-right-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .btn-icon-right {
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
-}
-
-.green-accent-btn .btn-icon-right {
-  filter: brightness(0); /* черный значок на зеленом фоне */
-}
-
-.ios-glass-btn:not(.green-accent-btn) .btn-icon-right {
   filter: brightness(0) invert(1);
 }
 
+/* Натуральный цвет иконки мозга */
+.natural-icon {
+  filter: none !important;
+}
+
 /* ===================================================
-   ЭКРАН ИГРЫ (ЦЕНТРАЛЬНЫЙ ДЖСОН + BACKGROUND.PNG + СОВЕТ)
+   ЭКРАН ИГРЫ (КЛАССИЧЕСКИЙ ГОРИЗОНТАЛЬНЫЙ ВИД)
    =================================================== */
 .game-screen-container {
   display: flex;
@@ -291,9 +270,9 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 376px;
+  max-width: 360px;
   height: 100%;
-  max-height: 590px;
+  max-height: 560px;
   padding: 16px 20px;
 }
 
@@ -306,52 +285,22 @@ html, body {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Карточка вопроса с центрированным джсоном и фоном Background.png */
-.game-question-hero-card {
-  position: relative;
+.game-header-area {
   width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 10px 6px 4px;
+  gap: 16px;
+  padding: 4px;
 }
 
-.question-bg-art {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -55%);
-  width: 250px;
-  height: 210px;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.25; /* Прозрачность 0.25 */
+.game-lottie-slot {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.question-bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.game-lottie-hero-slot {
-  position: relative;
-  z-index: 1;
-  width: 104px;
-  height: 104px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.game-write-lottie-hero {
-  width: 104px;
-  height: 104px;
 }
 
 .lottie-icon-host {
@@ -363,47 +312,49 @@ html, body {
   justify-content: center;
 }
 
-.game-question-text-area {
-  position: relative;
-  z-index: 1;
-  width: 100%;
+.game-write-lottie-host {
+  width: 84px;
+  height: 84px;
+}
+
+.game-question-block {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 6px;
-  min-height: 72px;
+  text-align: left;
+  flex-grow: 1;
+  min-height: 76px;
   justify-content: center;
 }
 
 .question-skeleton-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 8px;
   width: 100%;
 }
 
 .text-skeleton-line {
-  height: 15px;
+  height: 14px;
   border-radius: 99px;
   background-color: rgba(255, 255, 255, 0.04);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
-.text-skeleton-line.short { width: 35%; height: 13px; }
-.text-skeleton-line.full { width: 90%; }
+.text-skeleton-line.short { width: 45%; height: 12px; }
+.text-skeleton-line.full { width: 95%; }
+.text-skeleton-line.medium { width: 70%; }
 
 .question-number-slider {
   overflow: hidden;
   height: 24px;
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .game-question-badge {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.55);
@@ -421,20 +372,14 @@ html, body {
 }
 
 .game-question-text {
+  font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.32;
+  line-height: 1.3;
   letter-spacing: -0.02em;
   color: #ffffff;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  text-align: center;
 }
-
-/* Динамические размеры шрифта */
-.game-question-text.text-size-lg { font-size: 1.35rem; }
-.game-question-text.text-size-md { font-size: 1.22rem; }
-.game-question-text.text-size-sm { font-size: 1.12rem; }
 
 .jelly-word {
   display: inline-block;
@@ -443,7 +388,7 @@ html, body {
 }
 
 .game-compact-spacer {
-  height: 16px;
+  height: 24px;
   flex-shrink: 0;
 }
 
@@ -453,29 +398,6 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-}
-
-/* Совет под кнопками ответов */
-.game-advice-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 6px;
-  padding: 0 8px;
-}
-
-.advice-bulb-icon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 4px rgba(248, 199, 15, 0.4));
-}
-
-.advice-text {
-  font-size: 0.86rem;
-  color: rgba(255, 255, 255, 0.48);
-  letter-spacing: -0.01em;
 }
 
 /* ===================================================
@@ -493,20 +415,20 @@ html, body {
 }
 
 .thinking-lottie-slot {
-  width: 116px;
-  height: 116px;
+  width: 110px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .thinking-lottie-host {
-  width: 116px;
-  height: 116px;
+  width: 110px;
+  height: 110px;
 }
 
 .thinking-text-animated {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.85);
@@ -514,7 +436,7 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  max-width: 290px;
+  max-width: 280px;
 }
 
 .thinking-word {
@@ -554,9 +476,9 @@ html, body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 376px;
+  max-width: 360px;
   height: 100%;
-  max-height: 570px;
+  max-height: 560px;
   padding: 24px 20px;
   text-align: center;
   animation: fadeIn 0.3s ease-out;
@@ -574,26 +496,26 @@ html, body {
 }
 
 .win-lottie-slot {
-  width: 156px;
-  height: 156px;
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .win-lottie-host {
-  width: 156px;
-  height: 156px;
+  width: 150px;
+  height: 150px;
 }
 
 .win-phrase-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.92rem;
+  font-size: 1.85rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: #ffffff;
-  max-width: 320px;
+  max-width: 300px;
 }
 
 .win-buttons-group {
@@ -602,6 +524,20 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 12px;
+}
+
+.win-again-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.again-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 /* ===================================================
@@ -625,7 +561,7 @@ html, body {
 
 .reflections-inner-container {
   width: 100%;
-  max-width: 376px;
+  max-width: 360px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -645,7 +581,7 @@ html, body {
 
 .reflections-screen-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -678,26 +614,26 @@ html, body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .reflections-bath-slot {
-  width: 110px;
-  height: 110px;
+  width: 96px;
+  height: 96px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .reflections-bath-lottie {
-  width: 110px;
-  height: 110px;
+  width: 96px;
+  height: 96px;
 }
 
 .reflections-intro-heading {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #ffffff;
@@ -772,14 +708,14 @@ html, body {
 
 .timeline-node-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
 }
 
 .timeline-node-reflection {
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   line-height: 1.45;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.75);
@@ -797,7 +733,7 @@ html, body {
   width: 100%;
   border-radius: 9999px;
   padding: 15px 24px;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
 }
 
 .copy-btn.copied {
@@ -837,7 +773,7 @@ html, body {
 
 .settings-container {
   width: 100%;
-  max-width: 376px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
 }
@@ -854,7 +790,7 @@ html, body {
 
 .settings-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -874,8 +810,8 @@ html, body {
 
 .model-capsule-btn {
   width: 100%;
-  padding: 13px 20px;
-  min-height: 50px;
+  padding: 12px 18px;
+  min-height: 48px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -903,13 +839,13 @@ html, body {
 }
 
 .model-name {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: -0.015em;
 }
 
 .model-tag-badge {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 9999px;
@@ -928,13 +864,13 @@ html, body {
 .model-capsule-arrow.open { transform: rotate(180deg); }
 
 .settings-caption {
-  font-size: 0.85rem;
-  line-height: 1.36;
+  font-size: 0.84rem;
+  line-height: 1.35;
   color: rgba(255, 255, 255, 0.45);
   padding: 0 8px;
 }
 
-/* СТЕКЛЯННАЯ ШКАЛА ЭНЕРГИИ БЕЗ СВЕЧЕНИЙ */
+/* Стеклянная шкала лимитов */
 .energy-card {
   display: flex;
   flex-direction: column;
@@ -945,7 +881,7 @@ html, body {
 .energy-flask-track {
   position: relative;
   width: 100%;
-  height: 42px;
+  height: 40px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 9999px;
@@ -954,7 +890,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  box-shadow: none; /* Без лишнего свечения */
+  box-shadow: none;
 }
 
 .energy-flask-fill {
@@ -973,13 +909,13 @@ html, body {
   z-index: 2;
   margin-left: auto;
   font-family: 'Nunito', sans-serif;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #ffffff;
 }
 
 .energy-caption-text {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   line-height: 1.38;
   color: rgba(255, 255, 255, 0.48);
   padding: 0 8px;
@@ -1030,7 +966,7 @@ html, body {
 }
 
 .model-option-name {
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 500;
 }
 
@@ -1065,16 +1001,16 @@ html, body {
 }
 
 .error-lottie-slot {
-  width: 156px;
-  height: 156px;
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .error-lottie-host {
-  width: 156px;
-  height: 156px;
+  width: 150px;
+  height: 150px;
 }
 
 .error-text-block {
@@ -1085,17 +1021,17 @@ html, body {
 
 .error-phrase-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.92rem;
+  font-size: 1.85rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: #ffffff;
-  max-width: 320px;
+  max-width: 300px;
 }
 
 .error-code-text {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.18rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.015em;
