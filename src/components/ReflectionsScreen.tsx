@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LottieIcon } from './LottieIcon';
 
 export interface ReflectionItem {
   qunumber: number;
@@ -44,6 +45,18 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
         </header>
 
         <div className="reflections-scroll-container">
+          {/* АНИМАЦИЯ BATH.JSON + ЗАГОЛОВОК «Как я догадался» */}
+          <div className="reflections-hero-intro">
+            <div className="reflections-bath-slot">
+              <LottieIcon 
+                src="/Bath.json" 
+                className="reflections-bath-lottie" 
+                fallbackClass="ios-skeleton-box" 
+              />
+            </div>
+            <h3 className="reflections-intro-heading">Как я догадался</h3>
+          </div>
+
           {reflections.length === 0 ? (
             <div className="reflections-empty">
               <p>У Крегга не осталось сохраненных мыслей за эту партию</p>
@@ -62,9 +75,9 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
                     </div>
 
                     <div className="timeline-right-col">
-                      <h3 className="timeline-node-title">
+                      <h4 className="timeline-node-title">
                         Вопрос {item.qunumber}
-                      </h3>
+                      </h4>
                       <p className="timeline-node-reflection">
                         {item.reflection || 'Анализировал базовые признаки персонажа...'}
                       </p>
