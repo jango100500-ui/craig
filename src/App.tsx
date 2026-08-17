@@ -87,7 +87,7 @@ export const App: React.FC = () => {
       )}
 
       {currentScreen === 'game' && (
-        <GameScreen onWin={handleWin} />
+        <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
       {currentScreen === 'win' && (
@@ -112,7 +112,6 @@ export const App: React.FC = () => {
             onClick={() => setIsSettingsOpen(true)}
             aria-label="Настройки"
           >
-            {/* Имя файла с заглавной буквы */}
             <img src="/Settings.png" alt="Настройки" className="settings-icon-img" />
           </button>
 
