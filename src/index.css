@@ -8,6 +8,7 @@
   --glass-bg: rgba(30, 32, 40, 0.65);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-active: rgba(45, 48, 60, 0.85);
+  --purple-fill: linear-gradient(90deg, #9333ea 0%, #c084fc 100%);
 }
 
 /* ===================================================
@@ -144,7 +145,8 @@ html, body {
 /* ===================================================
    КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
    =================================================== */
-.home-settings-btn {
+.home-settings-btn,
+.settings-fixed-close-btn {
   position: fixed;
   top: calc(18px + env(safe-area-inset-top));
   right: 20px;
@@ -160,12 +162,13 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 50;
+  z-index: 10000;
   box-shadow: none;
   transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
-.home-settings-btn:active {
+.home-settings-btn:active,
+.settings-fixed-close-btn:active {
   transform: scale(0.92);
   background: var(--glass-active);
 }
@@ -173,6 +176,13 @@ html, body {
 .settings-icon-img {
   width: 22px;
   height: 22px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.cross-icon-img {
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
@@ -218,118 +228,6 @@ html, body {
 .ios-glass-btn.win-btn {
   background: rgba(48, 209, 88, 0.2);
   border-color: rgba(48, 209, 88, 0.4);
-}
-
-/* ===================================================
-   ЭКРАН ЗАГРУЗКИ (100% ЧЕРНЫЙ ФОН)
-   =================================================== */
-.loading-screen {
-  position: fixed;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  width: calc(100vw + 20px);
-  height: calc(100vh + 20px);
-  height: calc(100dvh + 20px);
-  background: #000000;
-  z-index: 999999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.loading-screen.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.loading-icon-wrapper {
-  position: relative;
-  width: 88px;
-  height: 88px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: iconSpringIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-}
-
-@keyframes iconSpringIn {
-  0% { opacity: 0; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-.loading-icon {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
-.loading-icon.base { opacity: 0.2; }
-.loading-icon.fill { opacity: 0.3; will-change: clip-path; }
-
-.loading-status {
-  margin-top: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.loading-word { display: flex; align-items: center; }
-
-.jelly-char {
-  display: inline-block;
-  opacity: 0;
-  transform-origin: center bottom;
-  animation: jellyPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes jellyPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(12px);
-  }
-  50% {
-    transform: scale(1.22, 0.82) translateY(-4px);
-  }
-  75% {
-    transform: scale(0.92, 1.08) translateY(1px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.loading-dots { display: flex; align-items: center; }
-
-.jelly-dot {
-  display: inline-block;
-  font-size: 1.25rem;
-  line-height: 1;
-  transform-origin: center bottom;
-  animation: jellyDotWave 1.4s ease-in-out infinite;
-}
-
-@keyframes jellyDotWave {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.35; }
-  50% { transform: translateY(-5px) scale(1.35, 0.75); opacity: 1; }
 }
 
 /* ===================================================
@@ -636,37 +534,13 @@ html, body {
   flex-shrink: 0;
 }
 
-.reflections-close-btn {
-  position: absolute;
-  right: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid var(--glass-border);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: none;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-.reflections-close-btn:active {
-  transform: scale(0.92);
-  background: var(--glass-active);
-}
-
+/* Заголовок с обычной заглавной буквы */
 .reflections-screen-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 0.88rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.55);
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #ffffff;
 }
 
 .reflections-scroll-container {
@@ -806,21 +680,21 @@ html, body {
   flex-direction: column;
   align-items: center;
   padding: calc(18px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
-  animation: settingsDarkFadeIn 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: settingsDarkFadeIn 0.18s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
 .settings-screen-overlay.closing {
-  animation: settingsDarkFadeOut 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation: settingsDarkFadeOut 0.18s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
 @keyframes settingsDarkFadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes settingsDarkFadeOut {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(0.98); }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .settings-container {
@@ -835,57 +709,84 @@ html, body {
   height: 44px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
+  justify-content: center;
+  margin-bottom: 24px;
   position: relative;
 }
 
+/* Заголовок с обычной заглавной буквы */
 .settings-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 0.88rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.55);
-  text-transform: uppercase;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.settings-close-round-btn {
-  margin-left: auto;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid var(--glass-border);
+  letter-spacing: -0.01em;
   color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: none;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-.settings-close-round-btn:active {
-  transform: scale(0.92);
-  background: var(--glass-active);
-}
-
-.cross-icon-img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
 }
 
 .settings-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 22px;
+}
+
+/* ===================================================
+   ФИОЛЕТОВАЯ КОЛБОЧКА ЛИМИТОВ
+   =================================================== */
+.energy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.energy-flask-track {
+  position: relative;
+  width: 100%;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(191, 90, 242, 0.3);
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 16px rgba(191, 90, 242, 0.12);
+}
+
+.energy-flask-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--purple-fill);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 14px rgba(191, 90, 242, 0.45);
+}
+
+.energy-percentage-label {
+  position: relative;
+  z-index: 2;
+  margin-left: auto;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.energy-caption-text {
+  font-size: 0.84rem;
+  line-height: 1.38;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 8px;
+}
+
+.model-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .model-capsule-btn {
@@ -948,10 +849,10 @@ html, body {
 }
 
 .settings-caption {
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.45);
-  padding: 0 12px;
+  padding: 0 8px;
 }
 
 .models-dropdown-list {
@@ -960,7 +861,7 @@ html, body {
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   overflow-y: auto;
-  max-height: 280px;
+  max-height: 260px;
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.2s ease-out;
@@ -1021,7 +922,7 @@ html, body {
 }
 
 /* ===================================================
-   НОВЫЙ ЭКРАН ОШИБКИ (ERROR SCREEN)
+   ЭКРАН ОШИБКИ (ERROR SCREEN)
    =================================================== */
 .game-error-view {
   width: 100%;
