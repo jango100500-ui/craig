@@ -118,21 +118,24 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
         </div>
 
         <div className="win-buttons-group">
+          {/* Акцентная зеленая кнопка #87D50C + Иконка Brain.png СПРАВА */}
           <button 
             type="button" 
-            className="ios-glass-btn win-action-btn"
+            className="ios-glass-btn green-accent-btn btn-with-right-icon"
             onClick={onViewReflections}
           >
-            Посмотреть размышления
+            <span>Посмотреть размышления</span>
+            <img src="/Brain.png" alt="" className="btn-icon-right" />
           </button>
 
+          {/* Кнопка Сыграть еще + Иконка Again.png СПРАВА */}
           <button 
             type="button" 
-            className="ios-glass-btn win-again-btn"
+            className="ios-glass-btn btn-with-right-icon"
             onClick={onRestart}
           >
-            <img src="/Again.png" alt="" className="again-icon-img" />
             <span>Сыграть еще</span>
+            <img src="/Again.png" alt="" className="btn-icon-right" />
           </button>
         </div>
       </main>
