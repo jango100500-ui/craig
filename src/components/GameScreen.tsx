@@ -3,7 +3,6 @@ import { askCraig, AIResponse, ChatMessage, CraigApiError, deductEnergyForGame }
 import { LottieIcon } from './LottieIcon';
 import { ReflectionItem } from './ReflectionsScreen';
 
-// Новые дерзкие стартовые фразы Крегга
 const INITIAL_PHRASES = [
   'Крегг готовит список вопросов…',
   'Крегг будет здесь через секундочку…',
@@ -58,7 +57,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
     const startPhrase = INITIAL_PHRASES[Math.floor(Math.random() * INITIAL_PHRASES.length)];
     setThinkingPhrase(startPhrase);
 
-    // Списание энергии на партию
     deductEnergyForGame();
 
     const initialUserMsg: ChatMessage = {
@@ -171,6 +169,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
 
   return (
     <main className="game-screen-container">
+      {/* 1. ЭКРАН ОШИБКИ */}
       {errorCode !== null ? (
         <div className="game-error-view">
           <div className="error-content-block">
@@ -199,6 +198,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
           </div>
         </div>
       ) : isThinking ? (
+        /* 2. ЭКРАН РАЗДУМИЙ С ЖЕЛЕЙНЫМИ БУКВАМИ */
         <div className="thinking-screen-view">
           <div className="thinking-lottie-slot">
             <LottieIcon 
@@ -226,6 +226,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
           </div>
         </div>
       ) : (
+        /* 3. ЭКРАН ВОПРОСА С ПОСЛОВНОЙ АНИМАЦИЕЙ */
         <div className="game-active-view">
           <div className="game-header-area">
             <div className="game-lottie-slot">
@@ -256,7 +257,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
                       <span 
                         key={wIdx} 
                         className="jelly-word" 
-                        style={{ animationDelay: `${wIdx * 50}ms` }}
+                        style={{ animationDelay: `${wIdx * 45}ms` }}
                       >
                         {word}&nbsp;
                       </span>
