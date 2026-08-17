@@ -4,6 +4,7 @@ import { SettingsScreen } from './components/SettingsScreen';
 import { WinScreen } from './components/WinScreen';
 import { ReflectionsScreen, ReflectionItem } from './components/ReflectionsScreen';
 import { LottieIcon } from './components/LottieIcon';
+import { initNotificationScheduler } from './services/notifications';
 
 const BUTTON_OPTIONS = [
   'Я загадал!',
@@ -29,11 +30,15 @@ export const App: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window.screen.orientation as any).lock('portrait').catch(() => {});
     }
+
+    // Запуск фонового планировщика уведомлений
+    initNotificationScheduler();
   }, []);
 
   const handleStartGame = () => {
+    // Легкая двойная вибрация при старте
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate(18);
+      navigator.vibrate([20, 40, 20]);
     }
     setCurrentScreen('game');
   };
@@ -58,10 +63,12 @@ export const App: React.FC = () => {
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
+      {/* 1. Экран игры */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
+      {/* 2. Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
@@ -69,6 +76,7 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 3. Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -76,6 +84,7 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 4. Главный экран */}
       {currentScreen === 'home' && (
         <>
           {!isSettingsOpen && (
@@ -107,7 +116,7 @@ export const App: React.FC = () => {
               </p>
             </div>
 
-            {/* Акцентная зеленая кнопка старта #87D50C */}
+            {/* Акцентная зеленая кнопка #87D50C */}
             <button 
               type="button" 
               className="ios-glass-btn green-accent-btn"
