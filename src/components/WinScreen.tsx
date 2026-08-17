@@ -22,8 +22,9 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
   });
 
   useEffect(() => {
+    // Двойная виброотдача при выигрыше Крегга
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate([25, 50, 25]);
+      navigator.vibrate([25, 45, 25]);
     }
 
     const canvas = canvasRef.current;
@@ -122,7 +123,7 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
         </div>
 
         <div className="win-buttons-group">
-          {/* Зеленая акцентная кнопка #87D50C + Иконка Brain.png справа в натуральном цвете */}
+          {/* Зеленая кнопка размышлений с натуральной иконкой мозга справа */}
           <button 
             type="button" 
             className="ios-glass-btn green-accent-btn btn-with-right-icon"
@@ -132,7 +133,7 @@ export const WinScreen: React.FC<WinScreenProps> = ({ onRestart, onViewReflectio
             <img src="/Brain.png" alt="" className="btn-icon-right natural-icon" />
           </button>
 
-          {/* Кнопка Сыграть еще + Иконка Again.png справа */}
+          {/* Сыграть еще с иконкой Again.png справа */}
           <button 
             type="button" 
             className="ios-glass-btn btn-with-right-icon"
