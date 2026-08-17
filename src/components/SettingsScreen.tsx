@@ -28,7 +28,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
 
   return (
     <div className={`settings-screen-overlay ${isClosing ? 'closing' : ''}`}>
-      {/* Кнопка закрытия зафиксирована ровно на месте кнопки настроек */}
       <button 
         type="button" 
         className="settings-fixed-close-btn"
@@ -39,18 +38,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
       </button>
 
       <div className="settings-container">
-        {/* Заголовок с обычной заглавной буквы */}
         <header className="settings-header">
           <h2 className="settings-title">Настройки</h2>
         </header>
 
         <div className="settings-section">
-          {/* ===================================================
-              ФИОЛЕТОВАЯ КОЛБОЧКА ЛИМИТОВ С ПРОЦЕНТАМИ
-              =================================================== */}
+          {/* Фиолетовая колбочка с процентами */}
           <div className="energy-card">
             <div className="energy-flask-track">
-              {/* Заполняющаяся фиолетовая полоса */}
               <div 
                 className="energy-flask-fill" 
                 style={{ width: `${energyPercent}%` }} 
@@ -63,7 +58,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             </p>
           </div>
 
-          {/* Стеклянная капсула выбора модели */}
           <div className="model-select-wrapper">
             <button 
               type="button"
