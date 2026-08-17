@@ -8,6 +8,8 @@
   --glass-bg: rgba(30, 32, 40, 0.65);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-active: rgba(45, 48, 60, 0.85);
+  --green-accent: #87D50C;
+  --green-border: #9ded15;
   --purple-flat: #a855f7;
 }
 
@@ -200,7 +202,7 @@ html, body {
 }
 
 /* ===================================================
-   iOS GLASS КНОПКА
+   iOS GLASS КНОПКИ (+ ЗЕЛЕНЫЙ АКЦЕНТ #87D50C)
    =================================================== */
 .ios-glass-btn {
   width: 100%;
@@ -230,6 +232,20 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Яркий зеленый акцент #87D50C */
+.green-accent-btn {
+  background: var(--green-accent) !important;
+  color: #0b0c0f !important;
+  border: 1px solid var(--green-border) !important;
+  font-weight: 750 !important;
+  text-shadow: none !important;
+}
+
+.green-accent-btn:active:not(.locked) {
+  opacity: 0.92;
+  transform: scale(0.96);
+}
+
 .ios-glass-btn.locked {
   cursor: not-allowed;
   opacity: 0.6;
@@ -256,7 +272,7 @@ html, body {
   filter: brightness(0) invert(1);
 }
 
-/* Натуральный цвет иконки мозга */
+/* Натуральный оригинальный цвет иконки мозга */
 .natural-icon {
   filter: none !important;
 }
@@ -608,7 +624,6 @@ html, body {
   border-radius: 99px;
 }
 
-/* Интро с гифкой Bath.json и текстом «Как я догадался» */
 .reflections-hero-intro {
   display: flex;
   flex-direction: column;
@@ -844,6 +859,7 @@ html, body {
   letter-spacing: -0.015em;
 }
 
+/* Бейджи провайдеров */
 .model-tag-badge {
   font-size: 0.72rem;
   font-weight: 700;
@@ -852,6 +868,21 @@ html, body {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.85);
   letter-spacing: -0.01em;
+}
+
+.model-tag-badge.tag-deepseek {
+  background: rgba(10, 132, 255, 0.2);
+  color: #5ac8fa;
+}
+
+.model-tag-badge.tag-openrouter {
+  background: rgba(255, 149, 0, 0.2);
+  color: #ff9f0a;
+}
+
+.model-tag-badge.tag-gemini {
+  background: rgba(175, 82, 222, 0.2);
+  color: #bf5af2;
 }
 
 .model-capsule-arrow {
