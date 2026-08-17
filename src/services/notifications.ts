@@ -1,13 +1,12 @@
 const NOTIF_STORAGE_KEY = 'craig_notifications_enabled';
 const LAST_NOTIF_TIME_KEY = 'craig_last_notif_time';
-const LAST_DAILY_1625_KEY = 'craig_last_daily_1625';
 
 const NOTIFICATION_PHRASES = [
   'Персонажи сами себя не загадают ✨',
   'Камон, мне уже скучно!',
   '🐊🐊🐊🐊🐊🐊🐊🐊🐊',
-  'Эй, друг, ты про меня совсем забыл!',
-  'Цыпа-цыпа, заходи поиграть, давай же!'
+  'Крегг ждет твою новую загадку!',
+  'Думаешь, сможешь меня обыграть? Заходи!'
 ];
 
 export function isNotificationsEnabled(): boolean {
@@ -36,7 +35,7 @@ export function sendCraigNotification(customBody?: string): void {
   const phrase = customBody || NOTIFICATION_PHRASES[Math.floor(Math.random() * NOTIFICATION_PHRASES.length)];
 
   try {
-    new Notification('Craig', {
+    new Notification('Крегг', {
       body: phrase,
       icon: '/icon-192.png',
       badge: '/icon-192.png',
@@ -48,32 +47,19 @@ export function sendCraigNotification(customBody?: string): void {
   }
 }
 
-// Фоновый таймер: проверка каждые 3 часа и в 16:25 каждый день
+// Фоновый таймер: отправка уведомлений каждые 3 часа
 export function initNotificationScheduler(): void {
   if (typeof window === 'undefined') return;
 
   const checkAndNotify = () => {
     if (!isNotificationsEnabled()) return;
-    if (Notification.permission !== 'granted') return;
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const todayStr = now.toDateString();
-
-    // 1. Проверка фиксированного времени 16:25
-    const lastDaily = localStorage.getItem(LAST_DAILY_1625_KEY);
-    if (hours === 16 && minutes === 25 && lastDaily !== todayStr) {
-      localStorage.setItem(LAST_DAILY_1625_KEY, todayStr);
-      sendCraigNotification();
-      return;
-    }
-
-    // 2. Проверка интервала в 3 часа (10800000 мс)
     const lastTimeRaw = localStorage.getItem(LAST_NOTIF_TIME_KEY);
     const lastTime = lastTimeRaw ? parseInt(lastTimeRaw, 10) : 0;
     const threeHoursMs = 3 * 60 * 60 * 1000;
 
+    // Если прошло 3 часа с последнего напоминания
     if (Date.now() - lastTime >= threeHoursMs) {
       sendCraigNotification();
     }
