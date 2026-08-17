@@ -32,7 +32,6 @@ export const App: React.FC = () => {
   }, []);
 
   const handleStartGame = () => {
-    // Легкая вибрация при старте
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(18);
     }
@@ -55,17 +54,14 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
-      {/* Экран настроек */}
       {isSettingsOpen && (
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {/* 1. Экран игры */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
-      {/* 2. Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
@@ -73,7 +69,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 3. Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -81,7 +76,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 4. Главный экран */}
       {currentScreen === 'home' && (
         <>
           {!isSettingsOpen && (
@@ -96,7 +90,6 @@ export const App: React.FC = () => {
           )}
 
           <main className="screen-container">
-            {/* Анимация Hi.json теперь загружается через LottieIcon и никогда не пропадает */}
             <div className="animation-slot">
               <LottieIcon 
                 src="/Hi.json" 
@@ -114,16 +107,15 @@ export const App: React.FC = () => {
               </p>
             </div>
 
-            {/* Классическая темная стеклянная кнопка */}
+            {/* Акцентная зеленая кнопка старта #87D50C */}
             <button 
               type="button" 
-              className="ios-glass-btn"
+              className="ios-glass-btn green-accent-btn"
               onClick={handleStartGame}
             >
               {buttonText}
             </button>
 
-            {/* Подпись автора */}
             <span className="author-tagline">Создан @temkazavr</span>
           </main>
         </>
