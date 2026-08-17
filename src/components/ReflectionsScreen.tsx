@@ -29,7 +29,6 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
 
   return (
     <div className="reflections-screen">
-      {/* Кнопка закрытия в той же правой точке */}
       <button 
         type="button" 
         className="settings-fixed-close-btn"
