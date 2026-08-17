@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import lottie from 'lottie-web';
-import { LoadingScreen } from './components/LoadingScreen';
 import { GameScreen } from './components/GameScreen';
 import { SettingsScreen } from './components/SettingsScreen';
 import { WinScreen } from './components/WinScreen';
@@ -13,7 +12,7 @@ const BUTTON_OPTIONS = [
   'Поехали!'
 ];
 
-type AppScreen = 'home' | 'loading' | 'game' | 'win' | 'reflections_loading' | 'reflections';
+type AppScreen = 'home' | 'game' | 'win' | 'reflections';
 
 export const App: React.FC = () => {
   const lottieContainer = useRef<HTMLDivElement | null>(null);
@@ -74,29 +73,25 @@ export const App: React.FC = () => {
         <p>Приложение работает только в вертикальном режиме</p>
       </div>
 
+      {/* Экран настроек */}
       {isSettingsOpen && (
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {currentScreen === 'loading' && (
-        <LoadingScreen onComplete={() => setCurrentScreen('game')} />
-      )}
-
-      {currentScreen === 'reflections_loading' && (
-        <LoadingScreen onComplete={() => setCurrentScreen('reflections')} />
-      )}
-
+      {/* 1. Экран игры (мгновенный переход) */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
+      {/* 2. Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
-          onViewReflections={() => setCurrentScreen('reflections_loading')}
+          onViewReflections={() => setCurrentScreen('reflections')}
         />
       )}
 
+      {/* 3. Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -104,6 +99,7 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 4. Главный экран */}
       {currentScreen === 'home' && (
         <>
           <button 
@@ -136,7 +132,7 @@ export const App: React.FC = () => {
             <button 
               type="button" 
               className="ios-glass-btn"
-              onClick={() => setCurrentScreen('loading')}
+              onClick={() => setCurrentScreen('game')}
             >
               {buttonText}
             </button>
