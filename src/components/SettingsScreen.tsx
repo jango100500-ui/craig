@@ -28,6 +28,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
 
   return (
     <div className={`settings-screen-overlay ${isClosing ? 'closing' : ''}`}>
+      {/* Кнопка закрытия зафиксирована в правом верхнем углу */}
       <button 
         type="button" 
         className="settings-fixed-close-btn"
@@ -43,21 +44,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
         </header>
 
         <div className="settings-section">
-          {/* Фиолетовая колбочка с процентами */}
-          <div className="energy-card">
-            <div className="energy-flask-track">
-              <div 
-                className="energy-flask-fill" 
-                style={{ width: `${energyPercent}%` }} 
-              />
-              <span className="energy-percentage-label">{energyPercent}%</span>
-            </div>
-
-            <p className="energy-caption-text">
-              Запас сил Крегга на сегодня. Тяжелые модели расходуют ресурс быстрее, а легкие позволяют провести больше партий. Лимит обновляется раз в сутки.
-            </p>
-          </div>
-
+          {/* 1. ПРИОРИТЕТ: ВЫБОР МОДЕЛИ НАВЕРХУ */}
           <div className="model-select-wrapper">
             <button 
               type="button"
@@ -107,6 +94,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
                 })}
               </div>
             )}
+          </div>
+
+          {/* 2. ПОЛОСКА ЛИМИТОВ СНИЗУ: СТЕКЛЯННАЯ ПЛАШКА БЕЗ СВЕЧЕНИЙ */}
+          <div className="energy-card">
+            <div className="energy-flask-track">
+              <div 
+                className="energy-flask-fill" 
+                style={{ width: `${energyPercent}%` }} 
+              />
+              <span className="energy-percentage-label">{energyPercent}%</span>
+            </div>
+
+            <p className="energy-caption-text">
+              Запас сил Крегга на сегодня. Тяжелые модели расходуют ресурс быстрее, а легкие позволяют провести больше партий. Лимит обновляется раз в сутки.
+            </p>
           </div>
         </div>
       </div>
