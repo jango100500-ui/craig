@@ -166,12 +166,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
   };
 
   const isGuessMode = Boolean(currentAI?.character);
-  const answerLength = currentAI?.answer?.length || 0;
-
-  // Динамический размер текста вопроса
-  let dynamicTextClass = 'text-size-lg';
-  if (answerLength > 75) dynamicTextClass = 'text-size-sm';
-  else if (answerLength > 45) dynamicTextClass = 'text-size-md';
 
   return (
     <main className="game-screen-container">
@@ -232,28 +226,23 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
           </div>
         </div>
       ) : (
-        /* 3. ЭКРАН ВОПРОСА С ФОНОМ BACKGROUND.PNG И ЦЕНТРАЛЬНЫМ ДЖСОНОМ */
+        /* 3. КЛАССИЧЕСКИЙ ЭКРАН ВОПРОСА (Write.json слева, Вопрос справа) */
         <div className="game-active-view">
-          <div className="game-question-hero-card">
-            {/* Фоновые знаки вопроса Background.png (прозрачность 0.25) */}
-            <div className="question-bg-art">
-              <img src="/Background.png" alt="" className="question-bg-img" />
-            </div>
-
-            {/* Центральный крупный Write.json */}
-            <div className="game-lottie-hero-slot">
+          <div className="game-header-area">
+            <div className="game-lottie-slot">
               <LottieIcon 
                 src="/Write.json" 
-                className="game-write-lottie-hero" 
+                className="game-write-lottie-host" 
                 fallbackClass="game-mock" 
               />
             </div>
 
-            <div className="game-question-text-area">
+            <div className="game-question-block">
               {!currentAI ? (
                 <div className="question-skeleton-group">
                   <div className="text-skeleton-line short" />
                   <div className="text-skeleton-line full" />
+                  <div className="text-skeleton-line medium" />
                 </div>
               ) : (
                 <>
@@ -263,7 +252,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
                     </span>
                   </div>
 
-                  <p key={currentAI.answer} className={`game-question-text ${dynamicTextClass}`}>
+                  <p key={currentAI.answer} className="game-question-text">
                     {currentAI.answer.split(' ').map((word, wIdx) => (
                       <span 
                         key={wIdx} 
@@ -342,14 +331,6 @@ export const GameScreen: React.FC<GameScreenProps> = ({ onWin, onRestart }) => {
                 </button>
               </>
             )}
-
-            {/* СОВЕТ ПОД КНОПКАМИ С ИКОНКОЙ BULB.PNG */}
-            <div className="game-advice-row">
-              <img src="/Bulb.png" alt="" className="advice-bulb-icon" />
-              <span className="advice-text">
-                Не уверен? Выбирай «Частично» или «Я не знаю»
-              </span>
-            </div>
           </div>
         </div>
       )}
