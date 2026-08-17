@@ -1,6 +1,3 @@
-/* ===================================================
-   ПЕРЕМЕННЫЕ И ОСНОВНАЯ ПАЛИТРА iOS
-   =================================================== */
 :root {
   --bg-color: #0b0c0f;
   --text-primary: #ffffff;
@@ -11,9 +8,6 @@
   --purple-fill: linear-gradient(90deg, #9333ea 0%, #c084fc 100%);
 }
 
-/* ===================================================
-   ГЛОБАЛЬНЫЙ СБРОС И БЛОКИРОВКА ЖЕСТОВ/СКРОЛЛА
-   =================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -40,7 +34,6 @@ html, body {
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -54,9 +47,6 @@ html, body {
   align-items: center;
 }
 
-/* ===================================================
-   ГЛАВНЫЙ ЭКРАН (HOME SCREEN)
-   =================================================== */
 .screen-container {
   display: flex;
   flex-direction: column;
@@ -142,9 +132,6 @@ html, body {
   color: var(--text-secondary);
 }
 
-/* ===================================================
-   КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
-   =================================================== */
 .home-settings-btn,
 .settings-fixed-close-btn {
   position: fixed;
@@ -187,9 +174,6 @@ html, body {
   filter: brightness(0) invert(1);
 }
 
-/* ===================================================
-   iOS GLASS КНОПКА
-   =================================================== */
 .ios-glass-btn {
   width: 100%;
   max-width: 320px;
@@ -350,6 +334,7 @@ html, body {
   flex-wrap: wrap;
 }
 
+/* Мармеладное появление слов вопроса */
 .jelly-word {
   display: inline-block;
   opacity: 0;
@@ -411,6 +396,31 @@ html, body {
 .thinking-word {
   display: inline-flex;
   white-space: pre;
+}
+
+/* Мармеладное появление букв */
+.jelly-char {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: center bottom;
+  animation: jellyPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes jellyPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(12px);
+  }
+  50% {
+    transform: scale(1.22, 0.82) translateY(-4px);
+  }
+  75% {
+    transform: scale(0.92, 1.08) translateY(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* ===================================================
@@ -534,7 +544,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Заголовок с обычной заглавной буквы */
 .reflections-screen-title {
   font-family: 'Nunito', sans-serif;
   font-size: 1.05rem;
@@ -714,7 +723,6 @@ html, body {
   position: relative;
 }
 
-/* Заголовок с обычной заглавной буквы */
 .settings-title {
   font-family: 'Nunito', sans-serif;
   font-size: 1.05rem;
@@ -729,9 +737,7 @@ html, body {
   gap: 22px;
 }
 
-/* ===================================================
-   ФИОЛЕТОВАЯ КОЛБОЧКА ЛИМИТОВ
-   =================================================== */
+/* Фиолетовая колбочка */
 .energy-card {
   display: flex;
   flex-direction: column;
