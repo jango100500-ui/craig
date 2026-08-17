@@ -122,21 +122,24 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             </p>
           </div>
 
-          {/* 3. Переключатель уведомлений */}
-          <div className="settings-toggle-card">
-            <div className="toggle-text-block">
-              <span className="toggle-title">Уведомления Крегга</span>
-              <span className="toggle-subtitle">Напоминания раз в 3 часа и в 16:25</span>
+          {/* 3. Уведомления от Крегга (описание вынесено из бокса) */}
+          <div className="settings-notif-wrapper">
+            <div className="settings-toggle-card">
+              <span className="toggle-title">Уведомления от Крегга</span>
+
+              <button 
+                type="button"
+                className={`ios-switch-btn ${notifActive ? 'active' : ''}`}
+                onClick={handleToggleNotif}
+                aria-label="Включить или выключить уведомления"
+              >
+                <span className="ios-switch-thumb" />
+              </button>
             </div>
 
-            <button 
-              type="button"
-              className={`ios-switch-btn ${notifActive ? 'active' : ''}`}
-              onClick={handleToggleNotif}
-              aria-label="Включить или выключить уведомления"
-            >
-              <span className="ios-switch-thumb" />
-            </button>
+            <p className="settings-caption">
+              Крегг будет присылать забавные напоминания каждые три часа, когда ему станет скучно.
+            </p>
           </div>
         </div>
       </div>
