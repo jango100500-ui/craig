@@ -16,6 +16,15 @@ export interface ModelOption {
   tag?: string;
 }
 
+// Класс ошибки с сохранением HTTP кода (429, 500, 404 и т.д.)
+export class CraigApiError extends Error {
+  code: string | number;
+  constructor(message: string, code: string | number = '500') {
+    super(message);
+    this.code = code;
+  }
+}
+
 // Полный пул моделей семейства 3.x и 2.5
 export const AVAILABLE_MODELS: ModelOption[] = [
   { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', tag: 'Рекомендуемая' },
@@ -40,7 +49,7 @@ export function setSelectedModelId(modelId: string): void {
   localStorage.setItem(STORAGE_KEY, modelId);
 }
 
-// Автоматический сбор всех ключей: VITE_GEMINI_API_KEY, VITE_GEMINI_API_KEY_2 и др.
+// Автосбор всех ключей: 1, 2, 3 и т.д.
 function getAllApiKeys(): string[] {
   const env = (import.meta as unknown as { env?: Record<string, string> }).env || {};
   const keys: string[] = [];
@@ -48,15 +57,15 @@ function getAllApiKeys(): string[] {
   if (env.VITE_GEMINI_API_KEY) {
     env.VITE_GEMINI_API_KEY.split(',').forEach(k => keys.push(k.trim()));
   }
-
   if (env.VITE_GEMINI_API_KEY_2) {
     env.VITE_GEMINI_API_KEY_2.split(',').forEach(k => keys.push(k.trim()));
   }
-
   if (env.VITE_GEMINI_API_KEY_3) {
     env.VITE_GEMINI_API_KEY_3.split(',').forEach(k => keys.push(k.trim()));
   }
-
+  if (env.VITE_GEMINI_API_KEY_4) {
+    env.VITE_GEMINI_API_KEY_4.split(',').forEach(k => keys.push(k.trim()));
+  }
   if (env.VITE_GEMINI_BACKUP_KEY) {
     env.VITE_GEMINI_BACKUP_KEY.split(',').forEach(k => keys.push(k.trim()));
   }
@@ -64,13 +73,12 @@ function getAllApiKeys(): string[] {
   const uniqueKeys = Array.from(new Set(keys.filter(Boolean)));
 
   if (uniqueKeys.length === 0) {
-    throw new Error('API-ключи не найдены! Добавьте VITE_GEMINI_API_KEY или VITE_GEMINI_API_KEY_2 в Vercel');
+    throw new CraigApiError('API-ключи не найдены в переменных окружения Vercel', 'NO_KEYS');
   }
 
   return uniqueKeys;
 }
 
-// Запоминаем текущий рабочий ключ, чтобы не повторять исчерпанный
 let currentActiveKeyIndex = 0;
 let systemPromptCache = '';
 
@@ -83,7 +91,7 @@ async function getSystemPrompt(): Promise<string> {
       return systemPromptCache;
     }
   } catch (e) {
-    console.warn('[Craig] Загружен резервный системный промпт');
+    console.warn('[Craig] Загружен базовый промпт');
   }
   return `Ты — Крегг, ИИ-Акинатор. Твоя цель — угадать загаданного персонажа бинарным поиском. Отвечай ТОЛЬКО строгим JSON: {"reflection":"...", "qunumber":1, "answer":"...", "character": null}`;
 }
@@ -110,9 +118,10 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
     ...AVAILABLE_MODELS.map(m => m.id).filter(id => id !== userChosen)
   ];
 
-  let lastErrorMsg = '';
+  let lastStatusCode: string | number = '500';
+  let lastErrorDetails = '';
 
-  // Проходим по всем доступным ключам, начиная с последнего успешно сработавшего
+  // Перебираем Ключ 1 -> Ключ 2 -> Ключ 3
   for (let k = 0; k < keys.length; k++) {
     const keyIndex = (currentActiveKeyIndex + k) % keys.length;
     const currentApiKey = keys[keyIndex];
@@ -140,13 +149,13 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
         });
 
         if (!response.ok) {
-          const errDetails = await response.text();
-          lastErrorMsg = `HTTP ${response.status}: ${errDetails}`;
+          lastStatusCode = response.status;
+          lastErrorDetails = await response.text();
 
-          // При ошибке 429 мгновенно бросаем этот ключ и переходим к следующему ключу!
-          if (response.status === 429) {
-            console.warn(`⚠️ [Craig AI] Ключ #${keyIndex + 1} исчерпал лимит (429). Мгновенное переключение на следующий ключ...`);
-            break; // Выходим из цикла моделей для этого ключа и берем следующий ключ
+          // При ошибке 429 или 403 сразу переключаемся на СЛЕДУЮЩИЙ КЛЮЧ
+          if (response.status === 429 || response.status === 403) {
+            console.warn(`⚠️ [Craig AI] Ключ #${keyIndex + 1} вернул ${response.status}. Переключаемся на следующий ключ...`);
+            break; 
           }
 
           console.warn(`[Craig AI] Модель ${model} вернула ${response.status}. Пробуем резервную модель...`);
@@ -160,17 +169,18 @@ export async function askCraig(history: ChatMessage[]): Promise<AIResponse> {
 
         const parsed = extractValidJSON(rawText);
 
-        // Успех: сохраняем этот ключ как основной для следующих вопросов партии
+        // Успех: фиксируем рабочий ключ
         currentActiveKeyIndex = keyIndex;
-        console.log(`✅ [Craig AI] Успешный ответ от ${model} (через Ключ #${keyIndex + 1}):`, parsed);
+        console.log(`✅ [Craig AI] Успех от ${model} (Ключ #${keyIndex + 1}):`, parsed);
         return parsed;
 
       } catch (err: any) {
-        lastErrorMsg = err.message || String(err);
-        console.warn(`[Craig AI] Ошибка запроса (${model}, Ключ #${keyIndex + 1}):`, lastErrorMsg);
+        lastErrorDetails = err.message || String(err);
+        console.warn(`[Craig AI] Ошибка запроса (${model}, Ключ #${keyIndex + 1}):`, lastErrorDetails);
       }
     }
   }
 
-  throw new Error(lastErrorMsg || 'Все доступные ключи и модели временно исчерпали квоту.');
+  // Только если ВСЕ 3 ключа на всех моделях выдали ошибку:
+  throw new CraigApiError(lastErrorDetails || 'Все ключи и модели исчерпали квоту', lastStatusCode);
 }
