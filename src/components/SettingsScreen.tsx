@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AVAILABLE_MODELS, getSelectedModelId, setSelectedModelId, getEnergyPercent } from '../services/gemini';
+import { isNotificationsEnabled, setNotificationsEnabled } from '../services/notifications';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
   const [isOpenList, setIsOpenList] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
+  const [notifActive, setNotifActive] = useState(isNotificationsEnabled());
   const energyPercent = getEnergyPercent();
   const currentModel = AVAILABLE_MODELS.find(m => m.id === selectedId) || AVAILABLE_MODELS[0];
 
@@ -17,6 +19,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
     setSelectedId(id);
     setSelectedModelId(id);
     setIsOpenList(false);
+  };
+
+  const handleToggleNotif = async () => {
+    const nextState = !notifActive;
+    setNotifActive(nextState);
+    await setNotificationsEnabled(nextState);
   };
 
   const handleClose = () => {
@@ -43,7 +51,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
         </header>
 
         <div className="settings-section">
-          {/* 1. Выбор модели (DeepSeek, OpenRouter, Gemini) */}
+          {/* 1. Выбор модели */}
           <div className="model-select-wrapper">
             <button 
               type="button"
@@ -112,6 +120,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             <p className="energy-caption-text">
               Запас сил Крегга на сегодня. Рассуждающие модели (R1, Pro) расходуют ресурс быстрее, а Flash-модели позволяют провести больше партий.
             </p>
+          </div>
+
+          {/* 3. Переключатель уведомлений */}
+          <div className="settings-toggle-card">
+            <div className="toggle-text-block">
+              <span className="toggle-title">Уведомления Крегга</span>
+              <span className="toggle-subtitle">Напоминания раз в 3 часа и в 16:25</span>
+            </div>
+
+            <button 
+              type="button"
+              className={`ios-switch-btn ${notifActive ? 'active' : ''}`}
+              onClick={handleToggleNotif}
+              aria-label="Включить или выключить уведомления"
+            >
+              <span className="ios-switch-thumb" />
+            </button>
           </div>
         </div>
       </div>
