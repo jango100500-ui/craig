@@ -45,7 +45,7 @@ export const ReflectionsScreen: React.FC<ReflectionsScreenProps> = ({ reflection
         </header>
 
         <div className="reflections-scroll-container">
-          {/* АНИМАЦИЯ BATH.JSON + ЗАГОЛОВОК «Как я догадался» */}
+          {/* Интро с гифкой Bath.json и текстом «Как я догадался» */}
           <div className="reflections-hero-intro">
             <div className="reflections-bath-slot">
               <LottieIcon 
