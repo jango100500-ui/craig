@@ -1,3 +1,6 @@
+/* ===================================================
+   ПЕРЕМЕННЫЕ И ОСНОВНАЯ ПАЛИТРА iOS
+   =================================================== */
 :root {
   --bg-color: #0b0c0f;
   --text-primary: #ffffff;
@@ -5,9 +8,15 @@
   --glass-bg: rgba(30, 32, 40, 0.65);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-active: rgba(45, 48, 60, 0.85);
-  --purple-fill: linear-gradient(90deg, #9333ea 0%, #c084fc 100%);
+  --green-accent: #87D50C;
+  --green-border: #9ded15;
+  --yellow-bulb: #F8C70F;
+  --purple-flat: #a855f7;
 }
 
+/* ===================================================
+   ГЛОБАЛЬНЫЙ СБРОС И БЛОКИРОВКА ЖЕСТОВ/СКРОЛЛА
+   =================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -34,6 +43,7 @@ html, body {
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -47,22 +57,25 @@ html, body {
   align-items: center;
 }
 
+/* ===================================================
+   ГЛАВНЫЙ ЭКРАН (+4% МАСШТАБИРОВАНИЕ)
+   =================================================== */
 .screen-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 360px;
+  max-width: 376px;
   padding: 0 24px;
   text-align: center;
 }
 
 .animation-slot {
   position: relative;
-  width: 136px;
-  height: 136px;
-  margin-bottom: 24px;
+  width: 142px;
+  height: 142px;
+  margin-bottom: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,14 +84,14 @@ html, body {
 .ios-skeleton-box {
   width: 100%;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 32px;
   border: none;
   background-color: rgba(255, 255, 255, 0.03);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
 .ios-skeleton-box.game-mock {
-  border-radius: 22px;
+  border-radius: 24px;
 }
 
 @keyframes smoothColorFade {
@@ -111,34 +124,50 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 34px;
+  gap: 14px;
+  margin-bottom: 36px;
   width: 100%;
 }
 
 .hero-title {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.2;
+  line-height: 1.22;
   color: var(--text-primary);
 }
 
+.hero-title-rounded {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
 .hero-subtitle {
-  font-size: 1.02rem;
+  font-size: 1.08rem;
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.48;
   letter-spacing: -0.012em;
   color: var(--text-secondary);
 }
 
+.author-tagline {
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.02em;
+}
+
+/* ===================================================
+   КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ
+   =================================================== */
 .home-settings-btn,
 .settings-fixed-close-btn {
   position: fixed;
   top: calc(18px + env(safe-area-inset-top));
   right: 20px;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
@@ -174,10 +203,13 @@ html, body {
   filter: brightness(0) invert(1);
 }
 
+/* ===================================================
+   iOS GLASS КНОПКИ (+ АКЦЕНТНЫЙ ЗЕЛЕНЫЙ)
+   =================================================== */
 .ios-glass-btn {
   width: 100%;
-  max-width: 320px;
-  padding: 15px 24px;
+  max-width: 334px;
+  padding: 16px 26px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -185,7 +217,7 @@ html, body {
   border-radius: 9999px;
   color: #ffffff;
   font-family: inherit;
-  font-size: 1.12rem;
+  font-size: 1.16rem;
   font-weight: 600;
   letter-spacing: -0.015em;
   cursor: pointer;
@@ -202,6 +234,20 @@ html, body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Сочный зеленый акцент #87D50C */
+.green-accent-btn {
+  background: var(--green-accent) !important;
+  color: #0b0c0f !important;
+  border: 1px solid var(--green-border) !important;
+  font-weight: 750 !important;
+  text-shadow: none !important;
+}
+
+.green-accent-btn:active:not(.locked) {
+  opacity: 0.92;
+  transform: scale(0.96);
+}
+
 .ios-glass-btn.locked {
   cursor: not-allowed;
   opacity: 0.6;
@@ -210,12 +256,34 @@ html, body {
 }
 
 .ios-glass-btn.win-btn {
-  background: rgba(48, 209, 88, 0.2);
-  border-color: rgba(48, 209, 88, 0.4);
+  background: rgba(48, 209, 88, 0.22);
+  border-color: rgba(48, 209, 88, 0.45);
+}
+
+/* Иконки справа в кнопках */
+.btn-with-right-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-icon-right {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+.green-accent-btn .btn-icon-right {
+  filter: brightness(0); /* черный значок на зеленом фоне */
+}
+
+.ios-glass-btn:not(.green-accent-btn) .btn-icon-right {
+  filter: brightness(0) invert(1);
 }
 
 /* ===================================================
-   ЭКРАН ИГРЫ (GAME SCREEN)
+   ЭКРАН ИГРЫ (ЦЕНТРАЛЬНЫЙ ДЖСОН + BACKGROUND.PNG + СОВЕТ)
    =================================================== */
 .game-screen-container {
   display: flex;
@@ -223,9 +291,9 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 360px;
+  max-width: 376px;
   height: 100%;
-  max-height: 560px;
+  max-height: 590px;
   padding: 16px 20px;
 }
 
@@ -238,22 +306,52 @@ html, body {
   animation: fadeIn 0.3s ease-out;
 }
 
-.game-header-area {
+/* Карточка вопроса с центрированным джсоном и фоном Background.png */
+.game-question-hero-card {
+  position: relative;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 4px;
+  text-align: center;
+  padding: 10px 6px 4px;
 }
 
-.game-lottie-slot {
-  position: relative;
-  width: 84px;
-  height: 84px;
-  flex-shrink: 0;
+.question-bg-art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 250px;
+  height: 210px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.25; /* Прозрачность 0.25 */
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.question-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.game-lottie-hero-slot {
+  position: relative;
+  z-index: 1;
+  width: 104px;
+  height: 104px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-write-lottie-hero {
+  width: 104px;
+  height: 104px;
 }
 
 .lottie-icon-host {
@@ -265,49 +363,47 @@ html, body {
   justify-content: center;
 }
 
-.game-write-lottie-host {
-  width: 84px;
-  height: 84px;
-}
-
-.game-question-block {
+.game-question-text-area {
+  position: relative;
+  z-index: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 6px;
-  text-align: left;
-  flex-grow: 1;
-  min-height: 76px;
+  min-height: 72px;
   justify-content: center;
 }
 
 .question-skeleton-group {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
   width: 100%;
 }
 
 .text-skeleton-line {
-  height: 14px;
+  height: 15px;
   border-radius: 99px;
   background-color: rgba(255, 255, 255, 0.04);
   animation: smoothColorFade 1.2s ease-in-out infinite alternate;
 }
 
-.text-skeleton-line.short { width: 45%; height: 12px; }
-.text-skeleton-line.full { width: 95%; }
-.text-skeleton-line.medium { width: 70%; }
+.text-skeleton-line.short { width: 35%; height: 13px; }
+.text-skeleton-line.full { width: 90%; }
 
 .question-number-slider {
   overflow: hidden;
   height: 24px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .game-question-badge {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.55);
@@ -325,16 +421,21 @@ html, body {
 }
 
 .game-question-text {
-  font-size: 1.2rem;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.32;
   letter-spacing: -0.02em;
   color: #ffffff;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
 }
 
-/* Мармеладное появление слов вопроса */
+/* Динамические размеры шрифта */
+.game-question-text.text-size-lg { font-size: 1.35rem; }
+.game-question-text.text-size-md { font-size: 1.22rem; }
+.game-question-text.text-size-sm { font-size: 1.12rem; }
+
 .jelly-word {
   display: inline-block;
   opacity: 0;
@@ -342,7 +443,7 @@ html, body {
 }
 
 .game-compact-spacer {
-  height: 24px;
+  height: 16px;
   flex-shrink: 0;
 }
 
@@ -352,6 +453,29 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+/* Совет под кнопками ответов */
+.game-advice-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 0 8px;
+}
+
+.advice-bulb-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(248, 199, 15, 0.4));
+}
+
+.advice-text {
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.48);
+  letter-spacing: -0.01em;
 }
 
 /* ===================================================
@@ -369,20 +493,20 @@ html, body {
 }
 
 .thinking-lottie-slot {
-  width: 110px;
-  height: 110px;
+  width: 116px;
+  height: 116px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .thinking-lottie-host {
-  width: 110px;
-  height: 110px;
+  width: 116px;
+  height: 116px;
 }
 
 .thinking-text-animated {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: rgba(255, 255, 255, 0.85);
@@ -390,7 +514,7 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  max-width: 280px;
+  max-width: 290px;
 }
 
 .thinking-word {
@@ -398,7 +522,6 @@ html, body {
   white-space: pre;
 }
 
-/* Мармеладное появление букв */
 .jelly-char {
   display: inline-block;
   opacity: 0;
@@ -407,20 +530,10 @@ html, body {
 }
 
 @keyframes jellyPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translateY(12px);
-  }
-  50% {
-    transform: scale(1.22, 0.82) translateY(-4px);
-  }
-  75% {
-    transform: scale(0.92, 1.08) translateY(1px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  0% { opacity: 0; transform: scale(0.3) translateY(12px); }
+  50% { transform: scale(1.22, 0.82) translateY(-4px); }
+  75% { transform: scale(0.92, 1.08) translateY(1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* ===================================================
@@ -441,9 +554,9 @@ html, body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 360px;
+  max-width: 376px;
   height: 100%;
-  max-height: 560px;
+  max-height: 570px;
   padding: 24px 20px;
   text-align: center;
   animation: fadeIn 0.3s ease-out;
@@ -461,26 +574,26 @@ html, body {
 }
 
 .win-lottie-slot {
-  width: 150px;
-  height: 150px;
+  width: 156px;
+  height: 156px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .win-lottie-host {
-  width: 150px;
-  height: 150px;
+  width: 156px;
+  height: 156px;
 }
 
 .win-phrase-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.85rem;
+  font-size: 1.92rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: #ffffff;
-  max-width: 300px;
+  max-width: 320px;
 }
 
 .win-buttons-group {
@@ -491,22 +604,8 @@ html, body {
   gap: 12px;
 }
 
-.win-again-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.again-icon-img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
 /* ===================================================
-   ЭКРАН РАЗМЫШЛЕНИЙ (REFLECTIONS SCREEN)
+   ЭКРАН РАЗМЫШЛЕНИЙ (REFLECTIONS SCREEN С BATH.JSON)
    =================================================== */
 .reflections-screen {
   position: fixed;
@@ -526,7 +625,7 @@ html, body {
 
 .reflections-inner-container {
   width: 100%;
-  max-width: 360px;
+  max-width: 376px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -540,13 +639,13 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-shrink: 0;
 }
 
 .reflections-screen-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -571,6 +670,37 @@ html, body {
 .reflections-scroll-container::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 99px;
+}
+
+/* Интро с гифкой Bath.json и текстом «Как я догадался» */
+.reflections-hero-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.reflections-bath-slot {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reflections-bath-lottie {
+  width: 110px;
+  height: 110px;
+}
+
+.reflections-intro-heading {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
 }
 
 .reflections-empty {
@@ -620,7 +750,6 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .timeline-vertical-line {
@@ -643,14 +772,14 @@ html, body {
 
 .timeline-node-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
 }
 
 .timeline-node-reflection {
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   line-height: 1.45;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.75);
@@ -668,7 +797,7 @@ html, body {
   width: 100%;
   border-radius: 9999px;
   padding: 15px 24px;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
 }
 
 .copy-btn.copied {
@@ -708,7 +837,7 @@ html, body {
 
 .settings-container {
   width: 100%;
-  max-width: 360px;
+  max-width: 376px;
   display: flex;
   flex-direction: column;
 }
@@ -725,7 +854,7 @@ html, body {
 
 .settings-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -737,58 +866,6 @@ html, body {
   gap: 22px;
 }
 
-/* Фиолетовая колбочка */
-.energy-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.energy-flask-track {
-  position: relative;
-  width: 100%;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(191, 90, 242, 0.3);
-  border-radius: 9999px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 16px rgba(191, 90, 242, 0.12);
-}
-
-.energy-flask-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background: var(--purple-fill);
-  border-radius: 9999px;
-  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 0 14px rgba(191, 90, 242, 0.45);
-}
-
-.energy-percentage-label {
-  position: relative;
-  z-index: 2;
-  margin-left: auto;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.energy-caption-text {
-  font-size: 0.84rem;
-  line-height: 1.38;
-  color: rgba(255, 255, 255, 0.5);
-  padding: 0 8px;
-}
-
 .model-select-wrapper {
   display: flex;
   flex-direction: column;
@@ -797,8 +874,8 @@ html, body {
 
 .model-capsule-btn {
   width: 100%;
-  padding: 12px 18px;
-  min-height: 48px;
+  padding: 13px 20px;
+  min-height: 50px;
   background: var(--glass-bg);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
@@ -812,9 +889,7 @@ html, body {
   transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.model-capsule-btn:active {
-  transform: scale(0.98);
-}
+.model-capsule-btn:active { transform: scale(0.98); }
 
 .model-capsule-btn.active {
   background: var(--glass-active);
@@ -828,13 +903,13 @@ html, body {
 }
 
 .model-name {
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: -0.015em;
 }
 
 .model-tag-badge {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 9999px;
@@ -850,14 +925,63 @@ html, body {
   transition: transform 0.2s ease;
 }
 
-.model-capsule-arrow.open {
-  transform: rotate(180deg);
-}
+.model-capsule-arrow.open { transform: rotate(180deg); }
 
 .settings-caption {
-  font-size: 0.84rem;
-  line-height: 1.35;
+  font-size: 0.85rem;
+  line-height: 1.36;
   color: rgba(255, 255, 255, 0.45);
+  padding: 0 8px;
+}
+
+/* СТЕКЛЯННАЯ ШКАЛА ЭНЕРГИИ БЕЗ СВЕЧЕНИЙ */
+.energy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.energy-flask-track {
+  position: relative;
+  width: 100%;
+  height: 42px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: none; /* Без лишнего свечения */
+}
+
+.energy-flask-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--purple-flat);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: none;
+}
+
+.energy-percentage-label {
+  position: relative;
+  z-index: 2;
+  margin-left: auto;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.energy-caption-text {
+  font-size: 0.85rem;
+  line-height: 1.38;
+  color: rgba(255, 255, 255, 0.48);
   padding: 0 8px;
 }
 
@@ -874,10 +998,7 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
-.models-dropdown-list::-webkit-scrollbar {
-  width: 4px;
-}
-
+.models-dropdown-list::-webkit-scrollbar { width: 4px; }
 .models-dropdown-list::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 99px;
@@ -898,17 +1019,9 @@ html, body {
   transition: background-color 0.15s ease;
 }
 
-.model-option-item:last-child {
-  border-bottom: none;
-}
-
-.model-option-item:active {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-.model-option-item.selected {
-  background-color: rgba(255, 255, 255, 0.05);
-}
+.model-option-item:last-child { border-bottom: none; }
+.model-option-item:active { background-color: rgba(255, 255, 255, 0.08); }
+.model-option-item.selected { background-color: rgba(255, 255, 255, 0.05); }
 
 .model-option-info {
   display: flex;
@@ -917,7 +1030,7 @@ html, body {
 }
 
 .model-option-name {
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -952,16 +1065,16 @@ html, body {
 }
 
 .error-lottie-slot {
-  width: 150px;
-  height: 150px;
+  width: 156px;
+  height: 156px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .error-lottie-host {
-  width: 150px;
-  height: 150px;
+  width: 156px;
+  height: 156px;
 }
 
 .error-text-block {
@@ -972,17 +1085,17 @@ html, body {
 
 .error-phrase-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.85rem;
+  font-size: 1.92rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.03em;
   color: #ffffff;
-  max-width: 300px;
+  max-width: 320px;
 }
 
 .error-code-text {
   font-family: 'Nunito', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.015em;
