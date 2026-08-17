@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import lottie from 'lottie-web';
+import React, { useEffect, useState } from 'react';
 import { GameScreen } from './components/GameScreen';
 import { SettingsScreen } from './components/SettingsScreen';
 import { WinScreen } from './components/WinScreen';
 import { ReflectionsScreen, ReflectionItem } from './components/ReflectionsScreen';
+import { LottieIcon } from './components/LottieIcon';
 
 const BUTTON_OPTIONS = [
   'Я загадал!',
@@ -15,11 +15,8 @@ const BUTTON_OPTIONS = [
 type AppScreen = 'home' | 'game' | 'win' | 'reflections';
 
 export const App: React.FC = () => {
-  const lottieContainer = useRef<HTMLDivElement | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('home');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
   const [savedReflections, setSavedReflections] = useState<ReflectionItem[]>([]);
 
   const [buttonText] = useState(() => {
@@ -32,30 +29,15 @@ export const App: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window.screen.orientation as any).lock('portrait').catch(() => {});
     }
-
-    let anim: ReturnType<typeof lottie.loadAnimation> | null = null;
-
-    fetch(`/Hi.json?t=${Date.now()}`)
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((animationData) => {
-        if (!lottieContainer.current) return;
-
-        anim = lottie.loadAnimation({
-          container: lottieContainer.current,
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          animationData,
-        });
-
-        setIsLoaded(true);
-      })
-      .catch(() => {
-        setIsLoaded(false);
-      });
-
-    return () => anim?.destroy();
   }, []);
+
+  const handleStartGame = () => {
+    // Легкая вибрация при старте
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(18);
+    }
+    setCurrentScreen('game');
+  };
 
   const handleWin = (reflections: ReflectionItem[]) => {
     setSavedReflections(reflections);
@@ -78,12 +60,12 @@ export const App: React.FC = () => {
         <SettingsScreen onClose={() => setIsSettingsOpen(false)} />
       )}
 
-      {/* Экран игры */}
+      {/* 1. Экран игры */}
       {currentScreen === 'game' && (
         <GameScreen onWin={handleWin} onRestart={handleRestart} />
       )}
 
-      {/* Экран победы */}
+      {/* 2. Экран победы */}
       {currentScreen === 'win' && (
         <WinScreen 
           onRestart={handleRestart}
@@ -91,7 +73,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Экран размышлений */}
+      {/* 3. Экран размышлений */}
       {currentScreen === 'reflections' && (
         <ReflectionsScreen 
           reflections={savedReflections}
@@ -99,10 +81,9 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Главный экран */}
+      {/* 4. Главный экран */}
       {currentScreen === 'home' && (
         <>
-          {/* Кнопка настроек скрывается, когда настройки открыты */}
           {!isSettingsOpen && (
             <button 
               type="button" 
@@ -115,16 +96,17 @@ export const App: React.FC = () => {
           )}
 
           <main className="screen-container">
+            {/* Анимация Hi.json теперь загружается через LottieIcon и никогда не пропадает */}
             <div className="animation-slot">
-              {!isLoaded && <div className="ios-skeleton-box" />}
-              <div 
-                ref={lottieContainer} 
-                className={`lottie-player ${isLoaded ? 'visible' : 'hidden'}`} 
+              <LottieIcon 
+                src="/Hi.json" 
+                className="home-lottie-host" 
+                fallbackClass="ios-skeleton-box" 
               />
             </div>
 
             <div className="text-group">
-              <h1 className="hero-title hero-title-rounded">
+              <h1 className="hero-title">
                 Загадай любого персонажа
               </h1>
               <p className="hero-subtitle">
@@ -132,11 +114,11 @@ export const App: React.FC = () => {
               </p>
             </div>
 
-            {/* Акцентная зеленая кнопка старта #87D50C */}
+            {/* Классическая темная стеклянная кнопка */}
             <button 
               type="button" 
-              className="ios-glass-btn green-accent-btn"
-              onClick={() => setCurrentScreen('game')}
+              className="ios-glass-btn"
+              onClick={handleStartGame}
             >
               {buttonText}
             </button>
