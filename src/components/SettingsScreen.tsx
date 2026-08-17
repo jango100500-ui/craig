@@ -43,7 +43,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
         </header>
 
         <div className="settings-section">
-          {/* Выбор модели на первом месте */}
+          {/* 1. Выбор модели (DeepSeek, OpenRouter, Gemini) */}
           <div className="model-select-wrapper">
             <button 
               type="button"
@@ -53,7 +53,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
               <div className="model-capsule-left">
                 <span className="model-name">{currentModel.name}</span>
                 {currentModel.tag && (
-                  <span className="model-tag-badge">{currentModel.tag}</span>
+                  <span className={`model-tag-badge tag-${currentModel.provider}`}>
+                    {currentModel.tag}
+                  </span>
                 )}
               </div>
 
@@ -65,7 +67,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             </button>
 
             <p className="settings-caption">
-              При исчерпании дневной квоты выбранной модели игра автоматически продолжится на резервной.
+              Поддерживаются DeepSeek R1, OpenRouter и семейство Gemini с автоматическим резервированием.
             </p>
 
             {isOpenList && (
@@ -82,7 +84,9 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
                       <div className="model-option-info">
                         <span className="model-option-name">{model.name}</span>
                         {model.tag && (
-                          <span className="model-tag-badge">{model.tag}</span>
+                          <span className={`model-tag-badge tag-${model.provider}`}>
+                            {model.tag}
+                          </span>
                         )}
                       </div>
                       {isSelected && (
@@ -95,7 +99,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             )}
           </div>
 
-          {/* Шкала лимитов на втором месте */}
+          {/* 2. Шкала лимитов */}
           <div className="energy-card">
             <div className="energy-flask-track">
               <div 
@@ -106,7 +110,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onClose }) => {
             </div>
 
             <p className="energy-caption-text">
-              Запас сил Крегга на сегодня. Тяжелые модели расходуют ресурс быстрее, а легкие позволяют провести больше партий. Лимит обновляется раз в сутки.
+              Запас сил Крегга на сегодня. Рассуждающие модели (R1, Pro) расходуют ресурс быстрее, а Flash-модели позволяют провести больше партий.
             </p>
           </div>
         </div>
